@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { apiBaseUrl } from "../utils/APIUtils";
 import { dateDifference } from "../utils/DataUtils";
 
+
 const ConcertsPage = () => {
   const [concert, setConcert] = useState([]);
 
@@ -37,7 +38,7 @@ const ConcertsPage = () => {
       {concert.map((data) => (
         <Card key={data.id} className="row flex-column col-sm-12 col-lg-6 mb-5 p-0 user-select-none bg-dark text-light concertCard">
           <CardActionArea onClick={() => {navigate(`${data.id}`)}}>
-            <CardMedia image={"http://localhost:8000" + data.bannerImg} component="img" height="300" />
+            <CardMedia image={apiBaseUrl + data.bannerImg} component="img" height="300" />
             <CardContent className="p-4">
               <div className="col bg-dark text-light px-2">
                 <div className="row align-items-start justify-content-between">

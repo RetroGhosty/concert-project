@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardMedia, CardActionArea } from '@mui/material'
 import dayjs from 'dayjs'
 import {dateDifference} from '../../utils/DataUtils'
-
+import { apiBaseUrl } from '../../utils/APIUtils'
 
 const OrganizerInfo_card = () => {
     const {user} = useContext(AuthContext)
@@ -40,7 +40,7 @@ const OrganizerInfo_card = () => {
             {organizerCxt.map((eachData) => (
               <Card key={eachData.id} onClick={() => {navigateTo(eachData.name, eachData.id)}} className='col-8 p-0 mb-5 user-select-none bg-dark text-light concertCard'>
                 <CardActionArea>
-                  <CardMedia sx={{height: 300}} image={`http://localhost:8000${eachData.bannerImg}`}/>
+                  <CardMedia sx={{height: 300}} image={`${apiBaseUrl}${eachData.bannerImg}`}/>
                   <CardContent className='p-4 bg-dark text-light'>
                     <div>
                       <div className='row justify-content-between'>

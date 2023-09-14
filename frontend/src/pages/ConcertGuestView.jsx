@@ -46,7 +46,7 @@ const ConcertGuestView = () => {
         <Card className="col-lg-8 bg-dark text-light p-0">
           <CardMedia 
           component="img" 
-          image={`http://localhost:8000${fetchedData.data['bannerImg']}`}
+          image={`${apiBaseUrl}${fetchedData.data['bannerImg']}`}
           height="400"/>
           <CardContent className='m-3'>
             <h1 className='mb-4'>{fetchedData.data['name']}</h1>

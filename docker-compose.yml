@@ -1,0 +1,25 @@
+version: "2.21"
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - 3000:3000
+    networks:
+      - concert-net
+    environment:
+      - REACT_APP_API_URL=192.168.2.101
+      - REACT_APP_API_PORT=8000
+  backend:
+    build: ./backend
+    ports:
+      - 8000:8000
+    environment:
+      - ISDEBUG=true
+      - SECRETKEY=talipapa
+    networks:
+      - concert-net
+
+networks:
+  concert-net:
+    driver: bridge

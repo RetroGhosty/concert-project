@@ -5,6 +5,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import AuthContext from '../context/AuthContext'
 import { PurpleButton } from '../components/CustomizedMaterials'
+import { apiBaseUrl } from '../utils/APIUtils'
 
 const RegisterPage = () => {
 
@@ -75,7 +76,7 @@ const RegisterPage = () => {
     }
 
     try {
-      let result = await axios.post('http://localhost:8000/api/register/user', body, {'content-type' : 'application/json'})
+      let result = await axios.post(`${apiBaseUrl}/api/register/user`, body, {'content-type' : 'application/json'})
       setisAcceptible(false)
       setServerAlert({alertHeader: "success", alertMessage: result.data.Response})
       navigate("/login", { replace: true });

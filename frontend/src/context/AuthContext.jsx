@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { apiBaseUrl } from "../utils/APIUtils";
 
 const AuthContext = createContext();
 export default AuthContext;
@@ -55,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/token/",
+        `${apiBaseUrl}/api/token/`,
         fieldvalue,
         headers
       );
