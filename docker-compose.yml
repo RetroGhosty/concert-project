@@ -1,25 +1,22 @@
 version: "2.21"
 
 services:
-  frontend:
-    build: ./frontend
-    ports:
-      - 3000:3000
-    networks:
-      - concert-net
-    environment:
-      - REACT_APP_API_URL=192.168.2.101
-      - REACT_APP_API_PORT=8000
   backend:
+    container_name: backend
     build: ./backend
-    ports:
-      - 8000:8000
     environment:
-      - ISDEBUG=true
+      - ISDEBUG=false
       - SECRETKEY=talipapa
-    networks:
-      - concert-net
-
-networks:
-  concert-net:
-    driver: bridge
+    command: gunicorn concert_ticket.wsgi --bind 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    environment:
+      - REACT_APP_API_URL=206.189.38.17
+      - REACT_APP_API_PORT=8000
+    ports:
+      - 80:3000
+    depends_on:
+      - backend

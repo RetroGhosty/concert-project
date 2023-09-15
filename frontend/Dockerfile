@@ -1,14 +1,16 @@
-# Using node:16-alpine base image
-FROM node:16-alpine 
-# Set /app as the default work directory
+# Use an official Node runtime as a parent image
+FROM node:latest
+# Set the working directory to /app
 WORKDIR /app
-# copy package.json to the working directory for packages installation
-COPY package.json /app
-# Install npm dependencies
-RUN npm install
-# Copy all the project files to the working directory
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
+# Install dependencies
+RUN yarn install
+# Copy the rest of the application code to the container
 COPY . .
-# Expose the port of your application to bind with the host port
-EXPOSE 3000
-# run your app
-CMD ["npm", "start"]
+# Build the production version of the application
+RUN yarn run build
+# Expose port 80 to the outside world
+EXPOSE 80
+# Run the command to start the server
+CMD ["yarn", "start"]
