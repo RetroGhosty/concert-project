@@ -1,4 +1,4 @@
-/testenv
+testenv/
 variables.env
 nginx
 .vscode
