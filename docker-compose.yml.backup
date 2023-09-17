@@ -1,0 +1,20 @@
+version: "2.21"
+
+services:
+  backend:
+    container_name: backend
+    build: ./backend
+    command: gunicorn concert_ticket.wsgi --bind 0.0.0.0:8000
+    env_file:
+      - variables.env
+    ports:
+      - "8000:8000"
+  frontend:
+    container_name: frontend
+    env_file:
+      - variables.env
+    build: ./frontend
+    ports:
+      - 80:3000
+    depends_on:
+      - backend
