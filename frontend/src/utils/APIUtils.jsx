@@ -1,2 +1,2 @@
-export const apiBaseUrl = `http://${process.env.REACT_APP_API_URL}`
+export const apiBaseUrl = `https://${process.env.REACT_APP_API_URL}`
 
