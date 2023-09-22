@@ -3,9 +3,8 @@ import axios from "axios";
 import { ImTicket } from "react-icons/im";
 import {Card, CardContent, CardMedia, CardActionArea} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { apiBaseUrl } from "../utils/APIUtils";
-import { dateDifference } from "../utils/DataUtils";
-
+import { apiBaseUrl, apiStaticURL, mediaBaseUrl } from "../utils/APIUtils";
+import dayjs from "dayjs";
 
 const ConcertsPage = () => {
   const [concert, setConcert] = useState([]);
@@ -32,19 +31,18 @@ const ConcertsPage = () => {
   }, []);
 
 
-
   return (
     <div className="row justify-content-between p-0">
       {concert.map((data) => (
         <Card key={data.id} className="row flex-column col-sm-12 col-lg-6 mb-5 p-0 user-select-none bg-dark text-light concertCard">
           <CardActionArea onClick={() => {navigate(`${data.id}`)}}>
-            <CardMedia image={apiBaseUrl + data.bannerImg} component="img" height="300" />
+            <CardMedia image={mediaBaseUrl + apiStaticURL + data.bannerImg} component="img" height="300" />
             <CardContent className="p-4">
-              <div className="col bg-dark text-light px-2">
+              <div className="col text-light px-2">
                 <div className="row align-items-start justify-content-between">
                   <div className="col">
                     <h2 className="text-uppercase">{data.name}</h2>
-                    <span className="text-info fw-bolder">{dateDifference(data['eventDue'], data['createdAt'])}</span>
+                    <span className="text-info fw-bolder">{`${dayjs(data['dateValidRange1']).format('MMM DD')} - ${dayjs(data['dateValidRange2']).format('MMM DD')}`}</span>
                   </div>
                   <div className="col-auto text-end">
                     <h5 className="d-inline p-2"><ImTicket/></h5>

@@ -7,6 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "email", "username", "first_name", "last_name", "isOrganizer", "birthdate", "birthplace"]
+        
     
 
 class UserPwSerializer(serializers.ModelSerializer):
@@ -20,10 +21,22 @@ class TicketSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class ConcertSerializer(serializers.ModelSerializer):
+    organizerName = serializers.SerializerMethodField()
+    bannerImg = serializers.ImageField(use_url=False, required=False)
     class Meta:
         model = Concert
         depth = 1
-        fields = "__all__"
+
+        fields = ['id', 'name', 'limit', 'bannerImg', 'paragraph', 'dateValidRange1', 'dateValidRange2', 'createdAt', 'organizerName', 'ticket']
+
+    def get_organizerName(self, obj):
+        organizer = obj.organizerName
+        if organizer:
+            dictionaryResponse = {
+                'name': f"{organizer.first_name} {organizer.last_name}"
+            }
+            return dictionaryResponse['name']
+        return None
 
 class PublicConcertSerializer(serializers.ModelSerializer):
     class Meta:

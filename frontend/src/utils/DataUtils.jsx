@@ -1,4 +1,4 @@
-import dayjs from "dayjs"
+// import dayjs from "dayjs"
 
 export const isValueEmpty = (stringValue, returnValue) => {
     if (stringValue === "" || stringValue === null || stringValue === undefined){
@@ -8,18 +8,25 @@ export const isValueEmpty = (stringValue, returnValue) => {
     }
 }
 
-export const dateDifference = (date1, date2) => {
-  const date = Math.floor(dayjs(date1).diff(date2, 'day', true))
-  if (isNaN(date)){
-    return "Date is empty"
+/**
+   export const dateDifference = (date1, date2) => {
+     const date = Math.floor(dayjs(date1).diff(date2, 'day', true))
+    if (isNaN(date)){
+      return "Date is empty"
+    }
+    if (date <= -1){
+      return "Event Ended"
+    }
+    switch(date) {
+      case 0:
+        return "Event ongoing!"
+      default:
+        return `${date} days left!`
+    }
   }
-  switch(date) {
-    case 0:
-      return "Event ongoing!"
-    default:
-      return `${date} days left!`
-  }
-}
+
+ */
+
 
 export const imageUploadPreview = (theImage, targetFiles, CustomSetFieldValue, UseStateImage) => {
   UseStateImage(URL.createObjectURL(targetFiles))

@@ -7,32 +7,33 @@ import axiosTokenIntercept from '../../utils/AxiosInterceptor'
 
 const OrganizerDashboard = () => {
   const { logout } = useContext(AuthContext)
-  const [concert, setConcert] = useState(undefined)
-
-  
-
+  const [concerts, setConcerts] = useState(undefined)
   useEffect(() => {
     let loading = true
     if (loading) {
       axiosTokenIntercept.get(`/api/concert/`)
       .then((result) => {
-        setConcert(result.data)
+        setConcerts(result.data)
       })
       .catch((result) => {
         logout()
       })
     }
-
     return () => {
       loading = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  let contextDiary = {
+    concerts : concerts,
+    setConcerts : setConcerts,
+  }
 
   return (
     <div className='row justify-content-between align-items-start'>
-        <OrganizerContext.Provider value={concert}>
+        
+        <OrganizerContext.Provider value={contextDiary}>
           <div className='col dashboard-main'>
             <OrganizerInfoCard />
           </div>
