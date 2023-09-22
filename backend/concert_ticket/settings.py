@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.environ.get("SECRETKEY")
-SECRET_KEY = "test"
+SECRET_KEY = "testwerbwerwerwe"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG  = False
+DEBUG  = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -183,6 +183,22 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+# EMAIL_HOST_USER = "postmaster@ph.redemption-dev.online"
+# EMAIL_HOST_PASSWORD = "7ce0657925e8ab77987d84c34ee4c19e-4b98b89f-acf11729"
+
+# Static Files
+STATIC_URL = '/static/'
+"""
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+"""
+
+"""
+# Production mode
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'media/')
@@ -191,3 +207,17 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/static/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
+"""
+
+
+# Amazon S3
+AWS_ACCESS_KEY_ID = 'AKIAUUZEC6J325IGBSHZ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'talipapa-bucket'
+AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_S3_REGION_NAME = 'ap-southeast-1'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL =  None
+AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
+STATICFILES_STORAGE = "storages.backends.s3.S3Storage"

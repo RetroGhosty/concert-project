@@ -20,64 +20,79 @@ import FooterComponent from "./components/FooterComponent";
 import AccountEditProfile from "./pages/account_protected/AccountEditProfile";
 import AccountChangePassword from "./pages/account_protected/AccountChangePassword";
 import ScrollToTop from "./utils/ScrollToTop";
+import { ThemeProvider, createTheme } from "@mui/material";
+
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#0DCAF0",
+    },
+  },
+});
 
 function App() {
   return (
-    <div className="body">
-      <div className="App container-fluid m-0 p-0">
-        <BrowserRouter>
-          <ScrollToTop>
-            <AuthProvider>
-              <PublicHeader />
-              <div className="container main-content">
-                <Routes>
-                  {/* Public routes */}
+    <ThemeProvider theme={theme}>
+      <div className="body">
+        <div className="App container-fluid m-0 p-0">
+          <BrowserRouter>
+            <ScrollToTop>
+              <AuthProvider>
+                <PublicHeader />
+                <div className="container main-content">
+                  <Routes>
+                    {/* Public routes */}
 
-                  <Route path="/" element={<Homepage />} exact />
-                  <Route path="/concerts" element={<ConcertsPage />} />
-                  <Route
-                    path="/concerts/:concertID"
-                    element={<ConcertGuestView />}
-                  />
-                  <Route path="*" element={<NotFound />} />
-
-                  {/* Inside here are protected routes */}
-                  <Route element={<ProtectedViews />}>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Route>
-
-                  <Route element={<ProtectedAccountViews />}>
-                    <Route path="/account" element={<AccountDashboard />} />
+                    <Route path="/" element={<Homepage />} exact />
+                    <Route path="/concerts" element={<ConcertsPage />} />
                     <Route
-                      path="/account/edit"
-                      element={<AccountEditProfile />}
-                    />
-                    <Route
-                      path="/account/changepassword"
-                      element={<AccountChangePassword />}
+                      path="/concerts/:concertID"
+                      element={<ConcertGuestView />}
                     />
                     <Route path="*" element={<NotFound />} />
-                  </Route>
 
-                  <Route element={<ProtectedOrganizerViews />}>
-                    <Route path="/dashboard" element={<OrganizerDashboard />} />
-                    <Route
-                      path="/dashboard/:concertName/edit"
-                      element={<EditConcert />}
-                    />
+                    {/* Inside here are protected routes */}
+                    <Route element={<ProtectedViews />}>
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/register" element={<RegisterPage />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Route>
 
-                    <Route path="*" element={<NotFound />} />
-                  </Route>
-                </Routes>
-              </div>
-              <FooterComponent />
-            </AuthProvider>
-          </ScrollToTop>
-        </BrowserRouter>
+                    <Route element={<ProtectedAccountViews />}>
+                      <Route path="/account" element={<AccountDashboard />} />
+                      <Route
+                        path="/account/edit"
+                        element={<AccountEditProfile />}
+                      />
+                      <Route
+                        path="/account/edit/changepassword"
+                        element={<AccountChangePassword />}
+                      />
+                      <Route path="*" element={<NotFound />} />
+                    </Route>
+
+                    <Route element={<ProtectedOrganizerViews />}>
+                      <Route
+                        path="/dashboard"
+                        element={<OrganizerDashboard />}
+                      />
+                      <Route
+                        path="/dashboard/:concertName/edit"
+                        element={<EditConcert />}
+                      />
+
+                      <Route path="*" element={<NotFound />} />
+                    </Route>
+                  </Routes>
+                </div>
+                <FooterComponent />
+              </AuthProvider>
+            </ScrollToTop>
+          </BrowserRouter>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }
 

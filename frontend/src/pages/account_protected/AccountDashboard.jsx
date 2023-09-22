@@ -5,8 +5,10 @@ import { useNavigate } from 'react-router-dom'
 import { isValueEmpty } from '../../utils/DataUtils'
 import ProfileBackgroundHero from '../../components/ProfileBackgroundHero'
 import axiosTokenIntercept from '../../utils/AxiosInterceptor'
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs'
 
 const AccountDashboard = () => {
+  
   let { logout, userDeepDetails, setUserDeepDetails } = useContext(AuthContext)
   let [isMounted, setIsMounted] = useState(false)
   useEffect(() => {
@@ -36,6 +38,7 @@ const AccountDashboard = () => {
       <div className='bg-dark text-light p-5 row'>
         <div className='col-12 mb-5 p-5'>
           <div className='row mb-3 justify-content-between align-items-end'>
+            <CustomBreadCrumbs/>
             <h2 className='col-12 col-lg-6 p-0 m-0'>Profile</h2>
             <PurpleButton className='col-12 col-lg-2 p-2' onClick={() => {navigate("edit")}}>Edit profile</PurpleButton>
           </div>

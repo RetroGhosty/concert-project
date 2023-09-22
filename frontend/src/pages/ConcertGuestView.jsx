@@ -7,7 +7,7 @@ import { PurpleButton } from '../components/CustomizedMaterials'
 
 import { Card, CardMedia, CardContent } from '@mui/material'
 import AuthContext from '../context/AuthContext'
-import { apiBaseUrl } from '../utils/APIUtils'
+import { apiBaseUrl, apiStaticURL, mediaBaseUrl } from '../utils/APIUtils'
 
 
 const ConcertGuestView = () => {
@@ -40,13 +40,13 @@ const ConcertGuestView = () => {
 
   const pgStateDecider = async (params) => {
     try {
-      const fetchedData = await axios.get(`/api/get/pub/concert/${params}`)
+      const fetchedData = await axios.get(`/api/get/pub/concert/${params}/`)
       let ConcertData = 
       <div className='row justify-content-between align-items-start'>
-        <Card className="col-lg-8 bg-dark text-light p-0">
+        <Card className="col-lg-8 text-light p-0">
           <CardMedia 
           component="img" 
-          image={`${apiBaseUrl}${fetchedData.data['bannerImg']}`}
+          image={`${mediaBaseUrl}${apiStaticURL}${fetchedData.data['bannerImg']}`}
           height="400"/>
           <CardContent className='m-3'>
             <h1 className='mb-4'>{fetchedData.data['name']}</h1>

@@ -10,7 +10,6 @@ class User(AbstractUser):
     birthplace = models.TextField(null=True, max_length=150, blank=True)
     email = models.CharField(unique=True, max_length=100)
     username = models.CharField(max_length=100, null=True)
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -23,7 +22,8 @@ class Ticket(models.Model):
     ticketType = models.CharField(choices=TicketTypeChoice.choices, max_length=100, null=True)
     price = models.IntegerField(null=True)
     date_created = models.DateTimeField(auto_now=True)
-    expiration = models.DateField(null=True)
+    dateValidRange1 = models.DateField(null=True)
+    dateValidRange2 = models.DateField(null=True)
     isUsed = models.BooleanField(default=False)
     def __str__(self):
         return (f"{self.ticketType} | {self.price}")
@@ -37,6 +37,12 @@ class Concert(models.Model):
     bannerImg = models.ImageField(upload_to="concert_banners", default="concert_banners/default.jpg")
     paragraph = models.TextField(null=True)
     createdAt = models.DateTimeField(null=True, auto_now_add=True)
-    eventDue = models.DateTimeField(null=True)
+    dateValidRange1 = models.DateField(null=True)
+    dateValidRange2 = models.DateField(null=True)
     def __str__(self):
         return self.name
+    
+class ResetPassword(models.Model):
+    email = models.CharField(max_length=255)
+    token = models.CharField(max_length=255, unique=True)
+    expiration = models.TimeField(null=True)

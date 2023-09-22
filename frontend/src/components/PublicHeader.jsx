@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 
 const PublicHeader = () => {
@@ -21,37 +21,32 @@ const PublicHeader = () => {
         <Link to="/" className="navbar-brand text-light">
           Concert
         </Link>
-
         {isOrganizer === true && <Link to="/dashboard" className="btn btn-info">Dashboard</Link>}
-
 
         <div
           className="navbar-collapse justify-content-end"
           id="navbarNavAltMarkup"
         >
           <div className="navbar-nav">
-            <Link to="/concerts" className="nav-item nav-link active text-light">
+            <NavLink to="/concerts" className="nav-item nav-link text-light mx-2">
               View Concerts
-            </Link>
+            </NavLink>
 
             {!user ? (
               <>
-                <Link to="/login" className="nav-item nav-link active text-light">
+                <NavLink to="/login" className="nav-item nav-link text-light mx-2">
                   Login
-                </Link>
-                <Link to="/register" className="nav-item nav-link active text-light">
+                </NavLink>
+                <NavLink to="/register" className="nav-item nav-link text-light mx-2">
                   Register
-                </Link>
+                </NavLink>
               </>
             ) : (
               <>
-
-                <Link to="/account" className="nav-item nav-link activate text-info">Account settings</Link>
-
-
+                <NavLink to="/account" className="nav-item nav-link activate text-info mx-2">Account settings</NavLink>
                 <button
                   onClick={logout}
-                  className="nav-item nav-link active btn btn-danger px-4 text-light ms-4"
+                  className="btn btn-danger px-4 text-light ms-4"
                 >
                   Logout
                 </button>

@@ -88,6 +88,58 @@ input:invalid ~ #formError{
   object-fit: cover;
 }
 
+.navbar-nav {
+  .active{
+    border-bottom: #ffff76 1px solid;
+  }
+}
+
+.customBreadCrumb{
+  background-color: #495057;
+  padding: 20px;
+}
+
+.MuiBreadcrumbs-separator{
+  color: white;
+}
+
+.customBreadLink{
+  text-decoration: none;
+  color: #adb5bd;
+}
+
+.MuiBreadcrumbs-li {
+  .active{
+    color: #3CB3F0 !important;
+  } 
+}
+
+
+.MuiOutlinedInput-input, .MuiOutlinedInput-root, .MuiTextField-root{
+  color: white !important;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  li{
+    transition: 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+    user-select: none;
+  }
+  li:hover{
+    cursor: pointer;
+    color: #ffff76;
+  }
+
+  .active{
+    color: #3CB3F0;
+    font-weight: 600;
+  }
+
+}
+
 
 
 
@@ -241,3 +293,4 @@ input:invalid ~ #formError{
 .react-calendar--selectRange .react-calendar__tile--hover {
   background-color: #e6e6e6;
 }
+

@@ -8,7 +8,7 @@ import { PurpleButton } from '../../components/CustomizedMaterials'
 import { useNavigate } from 'react-router-dom'
 import ProfileBackgroundHero from '../../components/ProfileBackgroundHero'
 import axiosTokenIntercept from '../../utils/AxiosInterceptor'
-
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs'
 
 const AccountEditProfile = () => {
     let {userDeepDetails, setUserDeepDetails} = useContext(AuthContext)
@@ -67,9 +67,10 @@ const AccountEditProfile = () => {
     if (userDeepDetails !== undefined){
         return (
             <ProfileBackgroundHero>
+                <CustomBreadCrumbs/>
                 <div className='row justify-content-between align-items-end mb-3'>
                     <h2 className='col-12 col-lg-6 p-0 m-0 col'>Edit Profile</h2>
-                    <PurpleButton className='col-3 p-2' onClick={() => {navigate("/account/changepassword")}}>Change password</PurpleButton>
+                    <PurpleButton className='col-3 p-2' onClick={() => {navigate("/account/edit/changepassword")}}>Change password</PurpleButton>
                 </div>
                 <form onSubmit={handleSubmit} className='row border-top border-info p-3'>
                     <div className='col-12 col-lg-6 my-3'>

@@ -7,6 +7,7 @@ import axiosTokenIntercept from '../../utils/AxiosInterceptor'
 import { PurpleButton } from '../../components/CustomizedMaterials'
 import * as bcryptjs from 'bcryptjs'
 import { useNavigate } from 'react-router-dom'
+import CustomBreadCrumbs from '../../components/CustomBreadCrumbs'
 
 const AccountChangePassword = () => {
     const {user} = useContext(AuthContext)
@@ -84,6 +85,7 @@ const AccountChangePassword = () => {
 
   return (
     <ProfileBackgroundHero Title="Change password">
+        <CustomBreadCrumbs/>
         <h2 className='col-12 col-lg-6 p-0 mb-3'>Change password</h2>
         <form onSubmit={handleSubmit} className='row border-top border-info p-3'>
             <div className='col-12 col-lg-6 my-3'>

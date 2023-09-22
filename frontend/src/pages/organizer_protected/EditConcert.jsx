@@ -8,9 +8,9 @@ import { ConcertSchema } from '../../schema/ConcertSchema'
 import  {PurpleButton } from '../../components/CustomizedMaterials'
 import ProfileBackgroundHero from '../../components/ProfileBackgroundHero'
 import { imageUploadPreview } from '../../utils/DataUtils'
-import { apiBaseUrl } from '../../utils/APIUtils'
-import dayjs from 'dayjs'
-import Calendar from 'react-calendar'
+import { apiStaticURL, mediaBaseUrl } from '../../utils/APIUtils'
+// import dayjs from 'dayjs'
+// import Calendar from 'react-calendar'
 
 
 const EditConcert = () => {
@@ -19,10 +19,6 @@ const EditConcert = () => {
   const navigate = useNavigate()
   let [concertFields, setConcertFields] = useState(undefined)
   let [imagePreview, setImagePreview] = useState(null)
-  
-  
-  
-
 
   useEffect(() => {
     let loading = true
@@ -39,7 +35,7 @@ const EditConcert = () => {
           paragraph: result.data['paragraph'],
           id: result.data['id']
         })
-        setImagePreview(`${apiBaseUrl}${result.data['bannerImg']}`)
+        setImagePreview(`${mediaBaseUrl}${apiStaticURL}${result.data['bannerImg']}`)
       })
       .catch((err) => {
         if (err.response['status'] === 404){
@@ -86,12 +82,14 @@ const EditConcert = () => {
     
   })
 
-  let [value, setDate] = useState(dayjs())
+  /*
+  let [dateValue, setDate] = useState(dayjs())
 
-  const onChange = value => {
-    setDate(value)
-    console.log(value)
+  const onChange = dateValue => {
+    setDate(dateValue)
+    console.log(dateValue)
   }
+  */
  
 
 
@@ -132,9 +130,11 @@ const EditConcert = () => {
             <input className={errors.limit ? "form-control is-invalid" : "form-control"} type="number" id='limit' onChange={handleChange} onBlur={handleBlur} value={values.limit} accept='image/jpeg, image/png'/>
             {errors.limit && touched.limit ? <div className='feedback-invalid mt-2'>{errors.limit}</div> : null}
           </div>
-          <div className='mb-3'>
-            <Calendar onChange={onChange} value={value} selectRange={true} minDate={new Date()} calendarType='iso8601'/>
-          </div>
+          {/*
+            <div className='mb-3'>
+              <Calendar onChange={onChange} value={dateValue} selectRange={true} minDate={new Date()} calendarType='iso8601'/>
+            </div>
+          */}
           <div className='mt-3'>
             <PurpleButton type='submit' className='px-5 py-2'>Edit</PurpleButton>
           </div>

@@ -3,16 +3,17 @@ from rest_framework.decorators import api_view
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.hashers import make_password 
 from . import models
 from . import serializers
-
-from rest_framework import permissions
-from rest_framework.decorators import permission_classes
+from django.core.mail import send_mail
 import re
+from rest_framework import permissions
+
+import random, string
 
 from rest_framework.views import APIView
-
 
 class ListSomething(APIView):
     def get(self, req, number):
@@ -44,8 +45,12 @@ class GetUserAll(APIView):
             if not persons:
                 return Response(data="No User found", status=404)
             return Response(persons.data)
-        except Exception as err:
-            return Response(data="Something went wrong", status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
 
 # User detail endpoints 
@@ -58,8 +63,12 @@ class GetUserDetails(APIView):
                 return Response(data="User doesn't exist", status=403)
 
             return Response(data=serializers.UserSerializer(person).data)
-        except:
-            return Response(data="Something went wronfg", status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
         
     def patch(self, req):
         try:
@@ -71,8 +80,12 @@ class GetUserDetails(APIView):
             if getUser.is_valid():
                 getUser.save()
                 return Response("User updated", status=200)
-        except:
-            return Response("Something went wrong", status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
 class GetConcertAll(APIView):
     def get(self, req):
@@ -81,8 +94,13 @@ class GetConcertAll(APIView):
             if not concerts:
                 return Response(data="No Concerts found", status=404)
             return Response(concerts.data)
-        except:
-            return Response(data="Something went wrong", status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            print(str(ex))
+            return Response(data=responseDict, status=500)
 
 class GetConcert(APIView):
     def get(self, req, concert_id):
@@ -92,25 +110,31 @@ class GetConcert(APIView):
                 return Response(data="Concert not found", status=404)
             
             return Response(data=serializers.ConcertSerializer(concerts).data)
-        except Exception as err:
-            return Response(data="Something went wrong: " + str(err), status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
 class OrganizerConcertModification(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
     def post(self, req):
         try:
             concert = models.Concert.objects.filter(name=req.data['concert_name']).first()
             if concert is None:
                 return Response(data="Concert not found", status=404)
-            
             serializedConcert = serializers.ConcertSerializer(concert).data
             if (int(req.data['organizer_id']) != int(req.user.id)):
                 return Response(data="Unauthorized access", status=403)
             return Response(data=serializedConcert, status=200)
 
-        except Exception as err:
-            print(str(err))
-            return Response(data="Something went wrong: " + str(err), status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
         
     def patch(self, req):
         try:
@@ -118,14 +142,18 @@ class OrganizerConcertModification(APIView):
             if concert is None:
                 return Response(data="Concert was not found", status=404)
             getConcert = serializers.ConcertSerializer(concert, req.data)
-            
+
             if getConcert.is_valid():
                 getConcert.save()
                 return Response(data="Saved", status=200)
-            return Response(data="Not valid", status=301)
-        except Exception as err:
-            print(f"Error: {err}")
-            return Response(data="Something went wrong: " + str(err), status=500)
+            print(getConcert.errors)
+            return Response(data=getConcert.errors, status=301)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
 class GetTicketAll(APIView):
     def get(self, req):
@@ -134,8 +162,12 @@ class GetTicketAll(APIView):
             if not tickets:
                 return Response(data="No ticket was found", status=404)
             return Response(tickets.data)
-        except:
-            return Response(data="No ticket found", status=404)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
 class GetTicketOfOrganizer(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -146,8 +178,12 @@ class GetTicketOfOrganizer(APIView):
                 return Response(data="No ticket was found in regards to this organizer", status=404)
 
             return Response(concerts.data)
-        except:
-            return Response(data="Ticket didn't exist", status=404)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
 
 class UserPassword(APIView):
@@ -161,13 +197,15 @@ class UserPassword(APIView):
             serializedPerson = serializers.UserPwSerializer(person)
             resultPw = re.split(regex, serializedPerson.data['password'])
             return Response(data={'password': resultPw[1]}, status=200)
-        except:
-            return Response(data="User does not exist", status=403)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
     
     def patch(self, req):
-        try:
-        
-            
+        try: 
             person = models.User.objects.filter(id=req.user.id).first()
             if person is None:
                 return Response(data="User was not found", status=404)
@@ -185,8 +223,12 @@ class UserPassword(APIView):
             return Response(data="Not valid", status=301)
 
         
-        except Exception as err:
-            return Response(data="Something went wrong: " + str(err), status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
 
 class RegisterUser(APIView):
@@ -197,7 +239,73 @@ class RegisterUser(APIView):
                 userSerialized.save()
                 return Response({"Response" : f"{userSerialized.data.get('username')} is successfully registered"})
             return Response(data=userSerialized.errors, status=403)
-        except:
-            return Response(data="Something went wrong", status=500)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
 
+class ResetPassword(APIView):
+    def post(self, req):
+        try:
+            email = req.data['email']
 
+            generatedToken = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+            models.ResetPassword.objects.create(
+                email = email,
+                token = generatedToken
+            )
+            dictionary = {
+                'Status' : "Success",
+                'info' : {
+                    'email' : email
+                }
+            }
+            url = 'http://localhost:3000/reset/' + generatedToken
+            send_mail(
+                subject="Reset password",
+                message=f"Click the link below to reset your password:\n\n{url}",
+                from_email="no-reply@gmail.com",
+                recipient_list=[email]
+            )
+            return Response(data=dictionary, status=200)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
+
+class OTPChangePassword(APIView):
+    def get(self, req):
+        data = req.data
+        token = models.ResetPassword.objects.filter(token=data['otp']).first()
+        if token is None:
+            return Response(data="Invalid token", status=401)
+        return Response(data="Token is valid", status=200)
+
+    def post(self, req):
+        try:
+            data = req.data
+            if (data['password'] != data['password_confirm']):
+                return Response(data="The password doesn't match", status=401)
+            token = models.ResetPassword.objects.filter(token=data['otp']).first()
+            if token is None:
+                return Response(data="Invalid OTP", status=401)
+            
+            user = models.User.objects.filter(email=data['email']).first()
+            if user is None:
+                return Response(data="User was not found", status=401)
+            user.set_password(data['password'])
+            user.save()
+            token.delete()
+            token = RefreshToken.for_user(user)
+            print(str(token))
+            return Response(data="Successfully changed the password", status=200)
+        except Exception as ex:
+            responseDict = {
+                'Server Response' : "Something went wrong",
+                'info' :  str(ex)
+            }
+            return Response(data=responseDict, status=500)
