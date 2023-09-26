@@ -28,10 +28,6 @@ const PublicHeader = () => {
           id="navbarNavAltMarkup"
         >
           <div className="navbar-nav">
-            <NavLink to="/concerts" className="nav-item nav-link text-light mx-2">
-              View Concerts
-            </NavLink>
-
             {!user ? (
               <>
                 <NavLink to="/login" className="nav-item nav-link text-light mx-2">

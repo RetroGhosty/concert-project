@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
-const AlertCard = ({alertHeader, alertMessage}) => {
+const AlertCard = ({ alertHeader, alertMessage }) => {
   return (
     <div className={alertHeader} role="alert">
-        {alertMessage}
+      {alertMessage}
     </div>
-  )
-}
+  );
+};
 
-export default AlertCard
+export default AlertCard;

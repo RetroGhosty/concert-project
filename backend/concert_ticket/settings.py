@@ -165,12 +165,11 @@ EMAIL_PORT = 1025
 
 # Static Files
 STATIC_URL = '/static/'
-"""
+
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-"""
 
 """
 # Production mode
@@ -184,7 +183,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
 """
 
-
+"""
 # Amazon S3
 AWS_ACCESS_KEY_ID = 'AKIAUUZEC6J325IGBSHZ'
 AWS_SECRET_ACCESS_KEY = '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'
@@ -196,3 +195,4 @@ AWS_DEFAULT_ACL =  None
 AWS_S3_VERITY = True
 DEFAULT_FILE_STORAGE = "storages.backends.s3.S3Storage"
 STATICFILES_STORAGE = "storages.backends.s3.S3Storage"
+"""

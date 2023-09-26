@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User, Ticket, Concert, ResetPassword
+from .models import User, TicketType, Ticket, Concert, ResetPassword
+
 # Register your models here.
 
-admin.site.register([User, Ticket, Concert, ResetPassword])
+admin.site.register([User, TicketType, Ticket, Concert, ResetPassword])
