@@ -43,7 +43,6 @@ const TicketTable = ({ ticketTypeID, currentTicketTypeActive }) => {
   if (serverResponseCode !== 200) {
     return <>No tickets found</>;
   }
-
   return (
     <div className="ticketInfoTable me-3">
       <table className="table table-dark table-striped">

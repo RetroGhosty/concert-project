@@ -1,46 +1,95 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { PurpleButton } from "../CustomizedMaterials";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useFormik } from "formik";
+import { ticketSchema } from "../../schema/TicketSchemas";
+import { date } from "yup";
 
 const CreateTicketTypeModals = (props) => {
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(null);
+  const { concert_id, dateMin, dateMax, ...rest } = props;
+
+  const dateChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  useEffect(() => {
+    if (dateMin !== undefined) {
+      setStartDate(new Date(dateMin));
+    }
+  }, [dateMin]);
+  const { values, setValues, handleBlur, handleChange, handleSubmit } =
+    useFormik({
+      validationSchema: ticketSchema,
+      initialValues: {
+        name: "",
+        description: "",
+        price: null,
+        concertEvent: concert_id,
+        dateValidRange1: null,
+        dateValidRange2: null,
+      },
+    });
+
+  if (dateMin === undefined) {
+    return (
+      <Modal {...rest} size="lg" centered data-bs-theme="dark">
+        <Modal.Header className="bg-dark text-light p-4" closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Create Ticket Type
+          </Modal.Title>
+        </Modal.Header>
+        <form>
+          <Modal.Body className="bg-dark text-light p-4">
+            Loading..........
+          </Modal.Body>
+          <Modal.Footer className="bg-dark p-4">
+            <PurpleButton onClick={props.onHide}>Create</PurpleButton>
+          </Modal.Footer>
+        </form>
+      </Modal>
+    );
+  }
   return (
-    <Modal {...props} size="lg" centered>
-      <Modal.Header className="bg-dark text-light p-4">
+    <Modal {...rest} size="lg" centered data-bs-theme="dark">
+      <Modal.Header className="bg-dark text-light p-4" closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           Create Ticket Type
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body className="bg-dark text-light p-4">
-        <h4>Centered Modal</h4>
-        <p>
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Numquam
-          veniam consectetur quidem rerum sint! Cum ipsum explicabo accusantium,
-          consectetur quam, suscipit esse tenetur quis, quasi corporis maxime.
-          Unde doloribus voluptates dicta! Voluptas quas architecto voluptatum
-          minus? Ea amet commodi voluptatum aliquam, consequuntur explicabo ut
-          quia non dolor velit? Culpa voluptatem quod officiis nesciunt! Ipsa
-          voluptatem ad non placeat ea a nobis perspiciatis illo! Tempore itaque
-          veniam dolore architecto, perferendis totam, eaque cum voluptates
-          eveniet dolores ratione. Numquam incidunt illo praesentium quos
-          aliquid aspernatur repellendus magni suscipit maiores, voluptates
-          veritatis magnam laudantium ab debitis voluptatibus repellat, rerum
-          inventore. Expedita quisquam facere enim sit neque nihil, quae
-          reiciendis quam nobis numquam provident temporibus adipisci pariatur
-          ipsum fuga quibusdam quidem omnis eum unde. Iure obcaecati sit
-          molestiae deserunt velit enim culpa repellendus, ipsam dolores libero
-          a ea eos laborum quia debitis modi quis ad suscipit, temporibus
-          assumenda corrupti. Aut eius veritatis explicabo voluptates nemo
-          accusantium labore saepe rerum quis quod! Soluta maxime maiores modi
-          ex itaque corrupti, dicta, impedit veniam sint odio ut atque eum amet
-          dolorem voluptatem ullam omnis adipisci officiis reprehenderit ipsam
-          ipsum! Facilis, modi praesentium quos veniam laboriosam eligendi
-          officia in eos cum magnam architecto! Ipsa tempore expedita voluptates
-          fugit.
-        </p>
-      </Modal.Body>
-      <Modal.Footer className="bg-dark p-4">
-        <PurpleButton onClick={props.onHide}>Close</PurpleButton>
-      </Modal.Footer>
+      <form>
+        <Modal.Body className="bg-dark text-light p-4">
+          <div className="row">
+            <div className="col-12">
+              <label htmlFor="datePickerValue" className="form-label">
+                Valid on
+              </label>
+            </div>
+            <div className="col-12">
+              <DatePicker
+                id="datePickerValue"
+                className="form-control"
+                minDate={new Date(dateMin)}
+                maxDate={new Date(dateMax)}
+                selected={startDate}
+                startDate={startDate}
+                endDate={endDate}
+                onChange={dateChange}
+                showDisabledMonthNavigation
+                selectsRange
+              />
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="bg-dark p-4">
+          <PurpleButton onClick={props.onHide}>Create</PurpleButton>
+        </Modal.Footer>
+      </form>
     </Modal>
   );
 };

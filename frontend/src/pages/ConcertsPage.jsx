@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { ImTicket } from "react-icons/im";
+
 import { Card, CardContent, CardMedia, CardActionArea } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { apiStaticURL, mediaBaseUrl } from "../utils/APIUtils";
-import dayjs from "dayjs";
 import useFetchConcertPublic from "../customHooks/useFetchConcertPublic";
 import NotFound from "./NotFound";
+import { format } from "date-fns";
 
 const ConcertsPage = () => {
   const navigate = useNavigate();
@@ -38,11 +37,11 @@ const ConcertsPage = () => {
                 <div className="row align-items-start justify-content-between">
                   <div className="col">
                     <h2 className="text-uppercase">{data.name}</h2>
-                    <span className="text-info fw-bolder">{`${dayjs(
-                      data["dateValidRange1"]
-                    ).format("MMM DD")} - ${dayjs(
-                      data["dateValidRange2"]
-                    ).format("MMM DD")}`}</span>
+                    <span className="text-info fw-bolder">
+                      {`${format(new Date(data["dateValidRange1"]), "MMM dd")} 
+                      - 
+                      ${format(new Date(data["dateValidRange2"]), "MMM dd")}`}
+                    </span>
                   </div>
                   {/**
                    * 

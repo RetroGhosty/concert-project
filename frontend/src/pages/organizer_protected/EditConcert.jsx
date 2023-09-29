@@ -105,7 +105,6 @@ const EditConcert = () => {
   if (!concertFields) {
     return null;
   }
-
   if (!Number.isInteger(concertFields)) {
     return (
       <>
@@ -211,7 +210,11 @@ const EditConcert = () => {
 
         <ProfileBackgroundHero>
           <h1 className="row mb-4 m-0">Ticket Manager</h1>
-          <TicketContainer id={concertFields.id} />
+          <TicketContainer
+            id={concertFields.id}
+            dateMin={concertFields.dateValidRange1}
+            dateMax={concertFields.dateValidRange2}
+          />
         </ProfileBackgroundHero>
       </>
     );

@@ -3,7 +3,6 @@ import AuthContext from "../../context/AuthContext";
 import { OrganizerContext } from "../../pages/organizer_protected/OrganizerDashboard";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardMedia, CardActionArea } from "@mui/material";
-import dayjs from "dayjs";
 import { apiStaticURL, mediaBaseUrl } from "../../utils/APIUtils";
 import axiosTokenIntercept from "../../utils/AxiosInterceptor";
 import TextField from "@mui/material/TextField";
@@ -23,8 +22,8 @@ const OrganizerInfo_card = () => {
       .then((result) => {
         setUserDeepDetails(result.data);
       })
-      .catch(() => {
-        logout();
+      .catch((err) => {
+        console.log(err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -105,44 +104,6 @@ const OrganizerInfo_card = () => {
         });
       }
     }
-
-    if (command === "eventDate") {
-      if (sortStateDirection["eventDate"] === 0) {
-        const sortedItems = [...filteredItems].sort((a, b) =>
-          a["dateValidRange1"].localeCompare(b["dateValidRange1"])
-        );
-        setConcert(sortedItems);
-        setSortStateDirection({
-          ...sortStateDirection,
-          alphabet: 0,
-          eventDate: 1,
-          revenue: 0,
-        });
-      } else if (sortStateDirection["eventDate"] === 1) {
-        const sortedItems = [...filteredItems].sort((a, b) =>
-          b["dateValidRange1"].localeCompare(a["dateValidRange1"])
-        );
-        setConcert(sortedItems);
-        setSortStateDirection({
-          ...sortStateDirection,
-          alphabet: 0,
-          eventDate: 2,
-          revenue: 0,
-        });
-      } else if (sortStateDirection["eventDate"] === 2) {
-        const sortedItems = [...filteredItems].sort((a, b) =>
-          a["dateValidRange1"].localeCompare(b["dateValidRange1"])
-        );
-        setConcert(sortedItems);
-        setSortStateDirection({
-          ...sortStateDirection,
-          alphabet: 0,
-          eventDate: 0,
-          revenue: 0,
-        });
-      }
-    }
-
     if (command === "revenue") {
       if (sortStateDirection["revenue"] === 0) {
         // ASCENDING FUNCTION HERE
@@ -280,31 +241,9 @@ const OrganizerInfo_card = () => {
                           <h3 className="fw-bold col">{eachData["name"]}</h3>
                           <span className="col text-end text-secondary">
                             Created At{" "}
-                            <div className="fw-bolder text-light">
-                              {dayjs(eachData["createdAt"]).format(
-                                "MMMM DD, YYYY"
-                              )}
-                            </div>
+                            <div className="fw-bolder text-light"></div>
                           </span>
                         </div>
-                        <div className="row justify-content-between">
-                          <h4 className="col text-info">{`${dayjs(
-                            eachData["dateValidRange1"]
-                          ).format("MMM DD")} - ${dayjs(
-                            eachData["dateValidRange2"]
-                          ).format("MMM DD")}`}</h4>
-                          {/**
-                          <h4 className="col text-end fw-lighter">
-                            Ticket collected: {eachData["ticket"].length}
-                          </h4>
-                           * 
-                           */}
-                        </div>
-                        {/**
-                         * 
-                         <h4 className='text-end'><span className='bg-success text-black px-3 rounded'>₱ {returnTotalValue(eachData['ticket'])}</span></h4>
-                         * 
-                         */}
                       </div>
                     </CardContent>
                   </CardActionArea>

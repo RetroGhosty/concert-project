@@ -5,7 +5,7 @@ import useFetchTicketType from "../../customHooks/useFetchTicketType";
 import TicketTable from "./TicketTable";
 import CreateTicketTypeModals from "../modals/CreateTicketTypeModals";
 
-const TicketContainer = ({ id }) => {
+const TicketContainer = ({ id, dateMin, dateMax }) => {
   const [data, isDataLoaded, serverResponseCode, setData] = useFetchTicketType(
     `/api/typeticket/${id}`
   );
@@ -35,7 +35,6 @@ const TicketContainer = ({ id }) => {
       </>
     );
   }
-
   return (
     <>
       <div className="border-top border-info p-3">
@@ -76,6 +75,8 @@ const TicketContainer = ({ id }) => {
         show={modalShow}
         onHide={() => setModalShow(false)}
         concert_id={id}
+        dateMin={dateMin}
+        dateMax={dateMax}
       />
     </>
   );

@@ -8,6 +8,7 @@ const useFetchTicketType = (link, currentTicketTypeActive) => {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [serverResponseCode, setServerResponseCode] = useState(undefined);
   axios.defaults.baseURL = apiBaseUrl;
+
   useEffect(() => {
     axiosTokenIntercept
       .get(link)
@@ -18,11 +19,11 @@ const useFetchTicketType = (link, currentTicketTypeActive) => {
       .catch((err) => {
         setServerResponseCode(err.response.status);
       });
-
     return () => {
       setIsDataLoaded(true);
     };
   }, [currentTicketTypeActive]);
+
   return [data, isDataLoaded, serverResponseCode, setData];
 };
 
