@@ -289,6 +289,8 @@ class OTPChangePassword(APIView):
 
 
 class TicketType(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, req, id):
         try:
             ticketType = models.TicketType.objects.filter(concertEvent=id)

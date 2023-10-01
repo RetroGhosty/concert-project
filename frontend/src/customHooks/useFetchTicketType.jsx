@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axiosTokenIntercept from "../utils/AxiosInterceptor";
 import axios from "axios";
 import { apiBaseUrl } from "../utils/APIUtils";
+import TicketContext from "../context/TicketContext";
 
 const useFetchTicketType = (link, currentTicketTypeActive) => {
+  const { ticketTypeList, setTicketTypeList, isModified, setIsModified } =
+    useContext(TicketContext);
   const [data, setData] = useState();
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [serverResponseCode, setServerResponseCode] = useState(undefined);
   axios.defaults.baseURL = apiBaseUrl;
 
@@ -14,17 +16,18 @@ const useFetchTicketType = (link, currentTicketTypeActive) => {
       .get(link)
       .then((result) => {
         setData(result.data);
+        setTicketTypeList(result.data);
         setServerResponseCode(result.status);
       })
       .catch((err) => {
         setServerResponseCode(err.response.status);
       });
     return () => {
-      setIsDataLoaded(true);
+      setIsModified(false);
     };
-  }, [currentTicketTypeActive]);
+  }, [currentTicketTypeActive, isModified]);
 
-  return [data, isDataLoaded, serverResponseCode, setData];
+  return [data, serverResponseCode];
 };
 
 export default useFetchTicketType;

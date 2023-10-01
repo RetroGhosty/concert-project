@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import useFetchTicketType from "../../customHooks/useFetchTicketType";
 import {
   createColumnHelper,
@@ -6,9 +6,10 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import TicketContext from "../../context/TicketContext";
 
 const TicketTable = ({ ticketTypeID, currentTicketTypeActive }) => {
-  const [data, isDataLoaded, serverResponseCode, setData] = useFetchTicketType(
+  const [data, serverResponseCode] = useFetchTicketType(
     `/api/ticket/${ticketTypeID}`,
     currentTicketTypeActive
   );
@@ -40,6 +41,7 @@ const TicketTable = ({ ticketTypeID, currentTicketTypeActive }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const { ticketTypeList } = useContext(TicketContext);
   if (serverResponseCode !== 200) {
     return <>No tickets found</>;
   }

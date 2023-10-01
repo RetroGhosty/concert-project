@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { PurpleButton } from "../CustomizedMaterials";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useFormik } from "formik";
-import { ticketSchema } from "../../schema/TicketSchemas";
-import { date } from "yup";
+import { ticketTypeSchema } from "../../schema/TicketSchemas";
+import { format, parse, parseISO } from "date-fns";
+import axiosTokenIntercept from "../../utils/AxiosInterceptor";
+import TicketContext from "../../context/TicketContext";
 
 const CreateTicketTypeModals = (props) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
-  const { concert_id, dateMin, dateMax, ...rest } = props;
+
+  const { dateMin, dateMax, setIsModified } = useContext(TicketContext);
 
   const dateChange = (dates) => {
     const [start, end] = dates;
@@ -23,22 +26,49 @@ const CreateTicketTypeModals = (props) => {
       setStartDate(new Date(dateMin));
     }
   }, [dateMin]);
-  const { values, setValues, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      validationSchema: ticketSchema,
-      initialValues: {
-        name: "",
-        description: "",
-        price: null,
-        concertEvent: concert_id,
-        dateValidRange1: null,
-        dateValidRange2: null,
-      },
-    });
+
+  const {
+    values,
+    errors,
+    touched,
+    setValues,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    validationSchema: ticketTypeSchema,
+    initialValues: {
+      ticketName: "",
+      description: "",
+      price: "",
+      concertEvent: props.concert_id,
+    },
+    onSubmit: (values) => {
+      const { ticketName, description, concertEvent, price } = values;
+      const payload = {
+        name: ticketName,
+        description: description,
+        concertEvent: concertEvent,
+        price: price,
+        dateValidRange1: format(startDate, "yyyy-dd-MM"),
+        dateValidRange2: format(endDate, "yyyy-dd-MM"),
+      };
+
+      axiosTokenIntercept
+        .post(`/api/typeticket/${concertEvent}`, payload)
+        .then((result) => {
+          setIsModified(true);
+          props.onHide();
+        })
+        .catch((err) => {
+          console.log(err.data);
+        });
+    },
+  });
 
   if (dateMin === undefined) {
     return (
-      <Modal {...rest} size="lg" centered data-bs-theme="dark">
+      <Modal {...props} size="lg" centered data-bs-theme="dark">
         <Modal.Header className="bg-dark text-light p-4" closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             Create Ticket Type
@@ -56,21 +86,68 @@ const CreateTicketTypeModals = (props) => {
     );
   }
   return (
-    <Modal {...rest} size="lg" centered data-bs-theme="dark">
+    <Modal {...props} size="lg" centered data-bs-theme="dark">
       <Modal.Header className="bg-dark text-light p-4" closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
           Create Ticket Type
         </Modal.Title>
       </Modal.Header>
-      <form>
+      <form onSubmit={handleSubmit}>
         <Modal.Body className="bg-dark text-light p-4">
-          <div className="row">
+          <div className="row mb-3">
             <div className="col-12">
+              <label htmlFor="ticketName" className="form-label">
+                Ticket Name
+              </label>
+            </div>
+            <div className="col">
+              <input
+                type="text"
+                id="ticketName"
+                value={values.ticketName}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                className={
+                  errors.ticketName ? "form-control is-invalid" : "form-control"
+                }
+              />
+              {errors.ticketName && touched.ticketName ? (
+                <div className="feedback-invalid mt-2">{errors.ticketName}</div>
+              ) : null}
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-12">
+              <label htmlFor="description" className="form-label">
+                Description
+              </label>
+            </div>
+            <div className="col">
+              <textarea
+                type="text"
+                id="description"
+                rows={5}
+                value={values.description}
+                onBlur={handleBlur}
+                onChange={handleChange}
+                className={
+                  errors.description
+                    ? "form-control is-invalid"
+                    : "form-control"
+                }
+              />
+              {errors.description && touched.description ? (
+                <div className="feedback-invalid mt-2">
+                  {errors.description}
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div className="row mb-3">
+            <div className="col-4 d-flex flex-column">
               <label htmlFor="datePickerValue" className="form-label">
                 Valid on
               </label>
-            </div>
-            <div className="col-12">
               <DatePicker
                 id="datePickerValue"
                 className="form-control"
@@ -85,9 +162,29 @@ const CreateTicketTypeModals = (props) => {
               />
             </div>
           </div>
+          <div className="row mb-3">
+            <div className="col-4 d-flex flex-column">
+              <label htmlFor="price" className="form-label">
+                Ticket Price
+              </label>
+              <input
+                type="number"
+                value={values.price}
+                id="price"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                className={
+                  errors.price ? "form-control is-invalid" : "form-control"
+                }
+              />
+              {errors.price && touched.price ? (
+                <div className="feedback-invalid mt-2">{errors.price}</div>
+              ) : null}
+            </div>
+          </div>
         </Modal.Body>
         <Modal.Footer className="bg-dark p-4">
-          <PurpleButton onClick={props.onHide}>Create</PurpleButton>
+          <PurpleButton type="submit">Create</PurpleButton>
         </Modal.Footer>
       </form>
     </Modal>

@@ -1,9 +1,8 @@
 import { React, useContext, useEffect, useState, createContext } from "react";
 import OrganizerInfoCard from "../../components/organizer_protected/OrganizerInfoCard";
 import AuthContext from "../../context/AuthContext";
-import axiosTokenIntercept from "../../utils/AxiosInterceptor";
 import useFetchConcertPrivate from "../../customHooks/useFetchConcertPrivate";
-
+import { TicketProvider } from "../../context/TicketContext";
 const OrganizerDashboard = () => {
   const { logout } = useContext(AuthContext);
   const [concert, serverResponseCode, setConcert] =

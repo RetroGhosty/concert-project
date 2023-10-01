@@ -19,27 +19,21 @@ export const AuthProvider = ({ children }) => {
       : undefined
   );
 
-  let [loading, setLoading] = useState(true)
+  let [loading, setLoading] = useState(true);
 
   // Data for account settings and all that...
-  let [userDeepDetails, setUserDeepDetails] = useState(undefined)
-  let [serverAlert, setServerAlert] = useState(undefined)
-
-
-
+  let [userDeepDetails, setUserDeepDetails] = useState(undefined);
+  let [serverAlert, setServerAlert] = useState(undefined);
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
     if (authToken) {
-        setUser(jwt_decode(authToken.access))
+      setUser(jwt_decode(authToken.access));
     }
-    setLoading(false)
+    setLoading(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authToken, loading]);  // eslint-disable-line
-
-
-
+  }, [authToken, loading]); // eslint-disable-line
 
   const navigate = useNavigate();
 
@@ -65,32 +59,29 @@ export const AuthProvider = ({ children }) => {
       setServerAlert({
         ...serverAlert,
         alertHeader: "success",
-        alertMessage: "Successfully logged in"
+        alertMessage: "Successfully logged in",
       });
       setAuthToken(response.data);
       setUser(jwt_decode(response.data.refresh));
       localStorage.setItem("token", JSON.stringify(response.data));
-      navigate(-1, {replace: true});
+      navigate(-1, { replace: true });
     } catch (error) {
       e.target["password"].value = "";
       setServerAlert({
         ...serverAlert,
         alertHeader: "danger",
-        alertMessage: "Failed to logged in"
+        alertMessage: "Failed to logged in",
       });
     }
   };
 
-
   const logout = () => {
-    
     setAuthToken(undefined);
     setUser(undefined);
     localStorage.removeItem("token");
     navigate("/", { replace: true });
     setServerAlert(undefined);
   };
-
 
   let content = {
     LoginSubmit: LoginSubmit,
@@ -99,12 +90,11 @@ export const AuthProvider = ({ children }) => {
     setUserDeepDetails,
     user: user,
     authToken: authToken,
-    serverAlert : serverAlert,
-    setServerAlert : setServerAlert,
+    serverAlert: serverAlert,
+    setServerAlert: setServerAlert,
   };
 
   return (
-
     <AuthContext.Provider value={content}>
       {loading ? null : children}
     </AuthContext.Provider>

@@ -9,10 +9,8 @@ import { PurpleButton } from "../../components/CustomizedMaterials";
 import ProfileBackgroundHero from "../../components/ProfileBackgroundHero";
 import { imageUploadPreview } from "../../utils/DataUtils";
 import { apiStaticURL, mediaBaseUrl } from "../../utils/APIUtils";
-// import dayjs from 'dayjs'
-// import Calendar from 'react-calendar'
-
 import TicketContainer from "../../components/organizer_protected/TicketContainer";
+import TicketContext from "../../context/TicketContext";
 
 const EditConcert = () => {
   const { concertName } = useParams();
@@ -22,6 +20,8 @@ const EditConcert = () => {
   let [concertFields, setConcertFields] = useState(undefined);
   let [imagePreview, setImagePreview] = useState(null);
   const [data, setData] = useState();
+
+  const { setDateMin, setDateMax } = useContext(TicketContext);
 
   useEffect(() => {
     setIsLoaded(false);
@@ -33,6 +33,8 @@ const EditConcert = () => {
         })
         .then((result) => {
           setConcertFields(result.data);
+          setDateMin(result.data["dateValidRange1"]);
+          setDateMax(result.data["dateValidRange2"]);
           setValues({
             name: result.data["name"],
             limit: result.data["limit"],
@@ -92,15 +94,6 @@ const EditConcert = () => {
         });
     },
   });
-
-  /*
-  let [dateValue, setDate] = useState(dayjs())
-
-  const onChange = dateValue => {
-    setDate(dateValue)
-    console.log(dateValue)
-  }
-  */
 
   if (!concertFields) {
     return null;
@@ -210,11 +203,7 @@ const EditConcert = () => {
 
         <ProfileBackgroundHero>
           <h1 className="row mb-4 m-0">Ticket Manager</h1>
-          <TicketContainer
-            id={concertFields.id}
-            dateMin={concertFields.dateValidRange1}
-            dateMax={concertFields.dateValidRange2}
-          />
+          <TicketContainer id={concertFields.id} />
         </ProfileBackgroundHero>
       </>
     );
