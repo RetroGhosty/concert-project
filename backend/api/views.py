@@ -113,7 +113,8 @@ class GetConcert(APIView):
 
 
 class OrganizerConcertModification(APIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, req):
         try:
             concert = models.Concert.objects.filter(
@@ -289,7 +290,7 @@ class OTPChangePassword(APIView):
 
 
 class TicketType(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get(self, req, id):
         try:
@@ -300,6 +301,24 @@ class TicketType(APIView):
                 (ticketType), many=True
             )
             return Response(data=ticketTypeSerialized.data, status=200)
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)
+
+    def patch(self, req, id):
+        try:
+            ticketType = models.TicketType.objects.filter(id=id).first()
+            print(ticketType)
+            if ticketType is None:
+                return Response(data="Ticket type doesn't exist", status=401)
+            ticketTypeSerialized = serializers.TicketTypeSerializer(
+                ticketType, data=req.data
+            )
+            if ticketTypeSerialized.is_valid():
+                ticketTypeSerialized.save()
+                return Response(data=ticketTypeSerialized.data, status=200)
+            return Response(data="Data is invalid", status=300)
+
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
@@ -339,8 +358,8 @@ class Ticket(APIView):
     def get(self, req, id):
         try:
             ticket = models.Ticket.objects.filter(ticketType=id)
-            if ticket is None:
-                return Response(data="No ticket found", status=404)
+            if len(ticket) == 0:
+                return Response(data="No ticket type found", status=404)
             ticketSerialized = serializers.TicketSerializer((ticket), many=True)
             return Response(data=ticketSerialized.data, status=200)
         except Exception as ex:

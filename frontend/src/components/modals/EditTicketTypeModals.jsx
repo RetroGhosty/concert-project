@@ -1,78 +1,96 @@
 import React, { useContext, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { PurpleButton } from "../CustomizedMaterials";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import useFetchTicketType from "../../customHooks/useFetchTicketType";
+import TicketContext from "../../context/TicketContext";
 import { useFormik } from "formik";
 import { ticketTypeSchema } from "../../schema/TicketSchemas";
-import { format, parse, parseISO } from "date-fns";
+import { parse } from "date-fns";
+import DatePicker from "react-datepicker";
+import format from "date-fns/format";
 import axiosTokenIntercept from "../../utils/AxiosInterceptor";
-import TicketContext from "../../context/TicketContext";
 
-const CreateTicketTypeModals = (props) => {
+const EditTicketTypeModals = (props) => {
+  const { ticketTypeInfo, setTicketTypeInfo, dateMin, dateMax, setIsModified } =
+    useContext(TicketContext);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(null);
 
-  const { dateMin, dateMax, setIsModified } = useContext(TicketContext);
+  const {
+    values,
+    setValues,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    validationSchema: ticketTypeSchema,
+    initialValues: {
+      ticketName: "",
+      description: "",
+      price: "",
+      concertEvent: "",
+    },
+    onSubmit: (formValues) => {
+      // console.log(ticketTypeInfo.id);
+      const { ticketName, description, concertEvent, price } = formValues;
+      const payload = {
+        name: ticketName,
+        description: description,
+        concertEvent: concertEvent,
+        price: price,
+        dateValidRange1: format(startDate, "yyyy-dd-MM"),
+        dateValidRange2: format(endDate, "yyyy-dd-MM"),
+      };
+      axiosTokenIntercept
+        .patch(`api/typeticket/${ticketTypeInfo.id}`, payload)
+        .then((result) => {
+          setIsModified(true);
+          props.onHide();
+        })
+        .catch((err) => {
+          console.log(err.response.status);
+        });
+    },
+  });
+
+  useEffect(() => {
+    if (ticketTypeInfo !== undefined && props.concert_id !== undefined) {
+      setValues({
+        ticketName: ticketTypeInfo.name,
+        description: ticketTypeInfo.description,
+        price: ticketTypeInfo.price,
+        concertEvent: props.concert_id,
+      });
+      setStartDate(
+        parse(ticketTypeInfo["dateValidRange1"], "yyyy-dd-MM", new Date())
+      );
+      setEndDate(
+        parse(ticketTypeInfo["dateValidRange2"], "yyyy-dd-MM", new Date())
+      );
+    }
+  }, [ticketTypeInfo]);
 
   const dateChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
     setEndDate(end);
+    console.log(`${startDate} | ${endDate}`);
   };
 
-  useEffect(() => {
-    if (dateMin !== undefined) {
-      setStartDate(new Date(dateMin));
-    }
-  }, [dateMin]);
-
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      validationSchema: ticketTypeSchema,
-      initialValues: {
-        ticketName: "",
-        description: "",
-        price: "",
-        concertEvent: props.concert_id,
-      },
-      onSubmit: (values) => {
-        const { ticketName, description, concertEvent, price } = values;
-        const payload = {
-          name: ticketName,
-          description: description,
-          concertEvent: concertEvent,
-          price: price,
-          dateValidRange1: format(startDate, "yyyy-dd-MM"),
-          dateValidRange2: format(endDate, "yyyy-dd-MM"),
-        };
-
-        axiosTokenIntercept
-          .post(`/api/typeticket/${concertEvent}`, payload)
-          .then((result) => {
-            setIsModified(true);
-            props.onHide();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      },
-    });
-
-  if (dateMin === undefined) {
+  if (ticketTypeInfo === undefined) {
     return (
       <Modal {...props} size="lg" centered data-bs-theme="dark">
-        <Modal.Header className="bg-dark text-light p-4" closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Create Ticket Type
-          </Modal.Title>
+        <Modal.Header className="bg-dark text-light p-4">
+          <Modal.Title>Edit Ticket Type</Modal.Title>
         </Modal.Header>
         <form>
           <Modal.Body className="bg-dark text-light p-4">
-            Loading..........
+            Loading ....
           </Modal.Body>
-          <Modal.Footer className="bg-dark p-4">
-            <PurpleButton onClick={props.onHide}>Create</PurpleButton>
+          <Modal.Footer className="bg-dark text-light p-4">
+            <PurpleButton onClick={props.onHide}>Edit</PurpleButton>
           </Modal.Footer>
         </form>
       </Modal>
@@ -80,10 +98,8 @@ const CreateTicketTypeModals = (props) => {
   }
   return (
     <Modal {...props} size="lg" centered data-bs-theme="dark">
-      <Modal.Header className="bg-dark text-light p-4" closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Create Ticket Type
-        </Modal.Title>
+      <Modal.Header className="bg-dark text-light p-4">
+        <Modal.Title>Edit Ticket Type</Modal.Title>
       </Modal.Header>
       <form onSubmit={handleSubmit}>
         <Modal.Body className="bg-dark text-light p-4">
@@ -177,11 +193,11 @@ const CreateTicketTypeModals = (props) => {
           </div>
         </Modal.Body>
         <Modal.Footer className="bg-dark p-4">
-          <PurpleButton type="submit">Create</PurpleButton>
+          <PurpleButton type="submit">Edit</PurpleButton>
         </Modal.Footer>
       </form>
     </Modal>
   );
 };
 
-export default CreateTicketTypeModals;
+export default EditTicketTypeModals;

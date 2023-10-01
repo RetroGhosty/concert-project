@@ -41,7 +41,6 @@ const TicketTable = ({ ticketTypeID, currentTicketTypeActive }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const { ticketTypeList } = useContext(TicketContext);
   if (serverResponseCode !== 200) {
     return <>No tickets found</>;
   }
