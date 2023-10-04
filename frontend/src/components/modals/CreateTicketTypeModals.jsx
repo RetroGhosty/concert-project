@@ -62,7 +62,7 @@ const CreateTicketTypeModals = (props) => {
   if (dateMin === undefined) {
     return (
       <Modal {...props} size="lg" centered data-bs-theme="dark">
-        <Modal.Header className="bg-dark text-light p-4" closeButton>
+        <Modal.Header className="bg-dark text-light p-4">
           <Modal.Title id="contained-modal-title-vcenter">
             Create Ticket Type
           </Modal.Title>
@@ -80,7 +80,7 @@ const CreateTicketTypeModals = (props) => {
   }
   return (
     <Modal {...props} size="lg" centered data-bs-theme="dark">
-      <Modal.Header className="bg-dark text-light p-4" closeButton>
+      <Modal.Header className="bg-dark text-light p-4">
         <Modal.Title id="contained-modal-title-vcenter">
           Create Ticket Type
         </Modal.Title>

@@ -34,3 +34,12 @@ export const ticketSchema = yup.object().shape({
     .min(0, "The price should not be in negative integer")
     .required("Field required"),
 });
+
+export const generateTicketSchema = yup.object().shape({
+  createdBy: yup.string().required("This field is required"),
+  ticketType: yup.string().required("This field is required"),
+  howManyTicket: yup
+    .number()
+    .min(1, "Invalid value")
+    .required("This field is required"),
+});

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { PurpleButton } from "../CustomizedMaterials";
-import useFetchTicketType from "../../customHooks/useFetchTicketType";
 import TicketContext from "../../context/TicketContext";
 import { useFormik } from "formik";
 import { ticketTypeSchema } from "../../schema/TicketSchemas";
@@ -33,7 +32,6 @@ const EditTicketTypeModals = (props) => {
       concertEvent: "",
     },
     onSubmit: (formValues) => {
-      // console.log(ticketTypeInfo.id);
       const { ticketName, description, concertEvent, price } = formValues;
       const payload = {
         name: ticketName,

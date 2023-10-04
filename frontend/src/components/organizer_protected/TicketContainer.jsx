@@ -8,14 +8,19 @@ import { format, parse } from "date-fns";
 import { FaPesoSign } from "react-icons/fa6";
 import EditTicketTypeModals from "../modals/EditTicketTypeModals";
 import TicketContext from "../../context/TicketContext";
+import CreateTicketModals from "../modals/CreateTicketModals";
 
 const TicketContainer = ({ id, dateMin, dateMax }) => {
   const [data, serverResponseCode] = useFetchTicketType(
     `/api/typeticket/${id}`
   );
   const [currentTicketTypeActive, setCurrentTicketTypeActive] = useState(0);
+
   const [modalCreateTicketType, setModalCreateTicketType] = useState(false);
   const [modalEditTicketType, setModalEditTicketType] = useState(false);
+
+  const [modalGenerateTickets, setModalGenerateTickets] = useState(false);
+
   const { ticketTypeInfo, setTicketTypeInfo } = useContext(TicketContext);
 
   const dateValidityConvert = (startDate, endDate) => {
@@ -98,7 +103,9 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
           </div>
           <div className="col ticketInfoContainer p-0 ps-4 py-5">
             <div className="d-flex align-items-center justify-content-between me-3 mb-4">
-              <PurpleButton>Generate tickets</PurpleButton>
+              <PurpleButton onClick={() => setModalGenerateTickets(true)}>
+                Generate tickets
+              </PurpleButton>
               <span className="px-3 py-2 rounded bg-primary d-flex align-items-center justify-content-between">
                 <FaPesoSign className="me-2" />
                 {data[currentTicketTypeActive]?.price}
@@ -121,6 +128,11 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
         show={modalEditTicketType}
         onHide={() => setModalEditTicketType(false)}
         concert_id={id}
+      />
+      <CreateTicketModals
+        show={modalGenerateTickets}
+        onHide={() => setModalGenerateTickets(false)}
+        currentTicketType={data[currentTicketTypeActive]?.id}
       />
     </>
   );
