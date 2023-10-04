@@ -17,7 +17,7 @@ class User(AbstractUser):
 class Concert(models.Model):
     name = models.CharField(max_length=100)
     limit = models.IntegerField(null=True)
-    organizerName = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    organizerName = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     bannerImg = models.ImageField(
         upload_to="concert_banners", default="concert_banners/default.jpg"
     )
@@ -40,6 +40,7 @@ class TicketType(models.Model):
     dateValidRange1 = models.DateField(null=True)
     dateValidRange2 = models.DateField(null=True)
     date_created = models.DateField(auto_now=True)
+    organizerName = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"{self.name} | {self.concertEvent}"
@@ -47,7 +48,13 @@ class TicketType(models.Model):
 
 class Ticket(models.Model):
     ticketType = models.ForeignKey(TicketType, on_delete=models.CASCADE, null=True)
-    boughtBy = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    boughtBy = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="boughtBy"
+    )
+    createdBy = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, related_name="createdBy"
+    )
+
     date_created = models.DateField(auto_now=True)
     isUsed = models.BooleanField(default=False)
 

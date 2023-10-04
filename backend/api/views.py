@@ -10,6 +10,7 @@ from . import serializers
 from django.core.mail import send_mail
 import re
 from rest_framework import permissions
+from django.db import transaction
 
 import random, string
 
@@ -36,10 +37,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
+# api/token/
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+# api/get/users/
 class GetUserAll(APIView):
     permission_classes = [permissions.IsAdminUser]
 
@@ -55,6 +58,7 @@ class GetUserAll(APIView):
 
 
 # User detail endpoints
+# api/user/
 class GetUserDetails(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -84,6 +88,7 @@ class GetUserDetails(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/get/concerts/
 class GetConcertAll(APIView):
     def get(self, req):
         try:
@@ -99,6 +104,7 @@ class GetConcertAll(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/get/pub/concert/<int:concert_id>/
 class GetConcert(APIView):
     def get(self, req, concert_id):
         try:
@@ -112,6 +118,7 @@ class GetConcert(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/organizer/concert
 class OrganizerConcertModification(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -148,6 +155,7 @@ class OrganizerConcertModification(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/get/tickets/
 class GetTicketAll(APIView):
     def get(self, req):
         try:
@@ -162,6 +170,7 @@ class GetTicketAll(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/concert/
 class GetTicketOfOrganizer(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -181,6 +190,7 @@ class GetTicketOfOrganizer(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/userpw/
 class UserPassword(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -218,6 +228,7 @@ class UserPassword(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/register/user
 class RegisterUser(APIView):
     def post(self, req):
         try:
@@ -235,6 +246,7 @@ class RegisterUser(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/reset
 class ResetPassword(APIView):
     def post(self, req):
         try:
@@ -258,6 +270,7 @@ class ResetPassword(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/changepassword
 class OTPChangePassword(APIView):
     def get(self, req):
         data = req.data
@@ -289,6 +302,7 @@ class OTPChangePassword(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/typeticket/<int:id>"
 class TicketType(APIView):
     # permission_classes = [permissions.IsAuthenticated]
 
@@ -308,9 +322,15 @@ class TicketType(APIView):
     def patch(self, req, id):
         try:
             ticketType = models.TicketType.objects.filter(id=id).first()
-            print(ticketType)
+            ticketTypeMadeBy = ticketType.organizerName.id
+            currentActiveAccount = req.user.id
+
+            if ticketTypeMadeBy != currentActiveAccount:
+                return Response(data="Unauthorized request", status=403)
+
             if ticketType is None:
-                return Response(data="Ticket type doesn't exist", status=401)
+                return Response(data="Ticket type doesn't exist", status=404)
+
             ticketTypeSerialized = serializers.TicketTypeSerializer(
                 ticketType, data=req.data
             )
@@ -325,16 +345,43 @@ class TicketType(APIView):
 
     def post(self, req, id):
         try:
-            ticketType = serializers.TicketTypeSerializer(data=req.data)
-            if ticketType.is_valid():
-                ticketType.save()
+            ticketTypeSerialized = serializers.TicketTypeSerializer(data=req.data)
+            concertInfo = models.Concert.objects.get(id=req.data["concertEvent"])
+            ticketTypeMadeBy = concertInfo.organizerName.id
+            currentActiveAccount = req.user.id
+            # currentActiveAccount = 2  # Test account
+
+            if ticketTypeMadeBy != currentActiveAccount:
+                return Response(data="Unauthorized request", status=403)
+
+            if ticketTypeSerialized.is_valid():
+                ticketTypeSerialized.save()
                 return Response(data=req.data, status=200)
             else:
                 responseDict = {
                     "message": "Validation Error",
-                    "errors": ticketType.errors,
+                    "errors": ticketTypeSerialized.errors,
                 }
                 return Response(data=responseDict, status=300)
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)
+
+    def delete(self, req, id):
+        try:
+            ticketType = models.TicketType.objects.filter(id=id).first()
+            concertInfo = models.Concert.objects.get(id=req.data["concertEvent"])
+            ticketTypeMadeBy = concertInfo.organizerName.id
+            currentActiveAccount = req.user.id
+            # currentActiveAccount = 5  # Test account
+            if ticketTypeMadeBy != currentActiveAccount:
+                return Response(data="Unauthorized request", status=403)
+            if ticketType is None:
+                return Response(data="Ticket type doesn't exist", status=404)
+
+            ticketType.delete()
+            responseDict = {"info": f"Ticket type id {id} is successfully deleted"}
+            return Response(data=responseDict, status=200)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
@@ -354,7 +401,10 @@ class TicketTypeAll(APIView):
             return Response(data=responseDict, status=500)
 
 
+# api/ticket/<int:id>
 class Ticket(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, req, id):
         try:
             ticket = models.Ticket.objects.filter(ticketType=id)
@@ -365,3 +415,41 @@ class Ticket(APIView):
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
+
+    def post(self, req, id):
+        try:
+            ticketTypeInfo = models.TicketType.objects.get(id=id)
+            ticketTypeMadeBy = ticketTypeInfo.organizerName.id
+            currentActiveAccount = req.user.id
+            ticketTypeCreatedByInstance = models.User.objects.get(
+                id=req.data["createdBy"]
+            )
+            print(ticketTypeCreatedByInstance)
+            # currentActiveAccount = 2  # Test account
+            if ticketTypeMadeBy != currentActiveAccount:
+                responseDict = {
+                    "ticketTypeID": id,
+                    "madeBy": ticketTypeInfo.organizerName.id,
+                    "sessionUserID": req.user.id,
+                    "info": "Unauthorized Access",
+                }
+                return Response(data=responseDict, status=403)
+
+            ticketList = []
+            for ticketItems in range(int(req.data["howManyTicket"])):
+                ticketList.append(
+                    models.Ticket(
+                        ticketType=ticketTypeInfo, createdBy=ticketTypeCreatedByInstance
+                    )
+                )
+            models.Ticket.objects.bulk_create(ticketList)
+            responseDict = {
+                "info": f"Successfuly generated {req.data['howManyTicket']} tickets"
+            }
+            return Response(data=req.data, status=200)
+
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)
+
+    # TODO: Make delete http verb

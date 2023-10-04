@@ -48,6 +48,7 @@ class TicketSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "ticketType": {"required": True},
             "boughtBy": {"required": True},
+            "createdBy": {"required": True},
         }
 
     def get_boughtBy(self, obj):
