@@ -421,10 +421,6 @@ class Ticket(APIView):
             ticketTypeInfo = models.TicketType.objects.get(id=id)
             ticketTypeMadeBy = ticketTypeInfo.organizerName.id
             currentActiveAccount = req.user.id
-            ticketTypeCreatedByInstance = models.User.objects.get(
-                id=req.data["createdBy"]
-            )
-            print(ticketTypeCreatedByInstance)
             # currentActiveAccount = 2  # Test account
             if ticketTypeMadeBy != currentActiveAccount:
                 responseDict = {
@@ -435,6 +431,9 @@ class Ticket(APIView):
                 }
                 return Response(data=responseDict, status=403)
 
+            ticketTypeCreatedByInstance = models.User.objects.get(
+                id=req.data["createdBy"]
+            )
             ticketList = []
             for ticketItems in range(int(req.data["howManyTicket"])):
                 ticketList.append(
@@ -452,4 +451,43 @@ class Ticket(APIView):
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
 
-    # TODO: Make delete http verb
+    # TODO: Make edit http verb
+    # Function dapat nito ay pinapalitan yung boughtBy kung sakalin may bumili ng ticket
+    # find empty boughtBy and false value from isUsed
+
+    def delete(self, req, id):
+        try:
+            ticketTypeInfo = models.TicketType.objects.get(id=id)
+            ticketTypeMadeBy = ticketTypeInfo.organizerName.id
+            currentActiveAccount = req.user.id
+            # currentActiveAccount = 2  # Test account
+            if ticketTypeMadeBy != currentActiveAccount:
+                responseDict = {
+                    "ticketTypeID": id,
+                    "madeBy": ticketTypeInfo.organizerName.id,
+                    "sessionUserID": req.user.id,
+                    "info": "Unauthorized Access",
+                }
+                return Response(data=responseDict, status=403)
+
+            ticketNotFoundList = []
+            for i in req.data["ticketIdList"]:
+                ticketInstance = models.Ticket.objects.filter(id=i).first()
+                if ticketInstance is None:
+                    ticketNotFoundList.append(i)
+                else:
+                    ticketInstance.delete()
+
+            responseDict = {
+                "info": "Ticket not found",
+                "id": ticketNotFoundList,
+            }
+
+            if len(ticketNotFoundList) != 0:
+                return Response(data=responseDict, status=404)
+
+            return Response(data="It works", status=200)
+
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)

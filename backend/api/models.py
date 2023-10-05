@@ -43,7 +43,7 @@ class TicketType(models.Model):
     organizerName = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return f"{self.name} | {self.concertEvent}"
+        return f"{self.id} | {self.name} | {self.concertEvent}"
 
 
 class Ticket(models.Model):
