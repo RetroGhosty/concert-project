@@ -26,8 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "testwerbwerwerwe"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG  = False
 ALLOWED_HOSTS = ["*"]
 
 AUTH_USER_MODEL = "api.User"
@@ -155,12 +154,38 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://api.redemption-dev.online',
+    'http://localhost:8000',
+]
+
+CORS_ALLOW_METHODS = [
+'DELETE',
+'GET',
+'OPTIONS',
+'PATCH',
+'POST',
+'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 1025
 # EMAIL_HOST_USER = "postmaster@ph.redemption-dev.online"
 # EMAIL_HOST_PASSWORD = "7ce0657925e8ab77987d84c34ee4c19e-4b98b89f-acf11729"
 
+"""
 # Static Files
 STATIC_URL = "/static/"
 
@@ -171,7 +196,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 """
 # Production mode
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'media/')
 ]
@@ -179,7 +203,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/static/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
-"""
+
 
 """
 # Amazon S3
