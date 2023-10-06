@@ -6,13 +6,12 @@ $container-max-widths: (
   xxl: 1400px
 );
 //lagi dapat nasa last para ma over-ride
-@import '~bootstrap/scss/bootstrap.scss';
-@import '~bootstrap/scss/_variables.scss';
+@import '/node_modules/bootstrap/scss/bootstrap.scss';
+@import '/node_modules/bootstrap/scss/_variables.scss';
 
 #root{
   display: flex;
   flex-direction: column;
-
 }
 
 .custom-footer{
@@ -140,7 +139,9 @@ ul {
 
 }
 
-
+.list-item{
+  transition: 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
 
 
 ////////////////////////////////////////// REACT CALENDAR //////////////////////////////////////////////
@@ -294,3 +295,36 @@ ul {
   background-color: #e6e6e6;
 }
 
+.ticketContainer{
+  width: 100%;
+  height: 600px;
+
+}
+
+.ticketType{
+  background-color: #0a0908;
+  height: 100%;
+  overflow-y: scroll;
+  ul{
+    width: 100%;
+    text-align: center;
+    
+    li{
+      padding: 10px 0 10px 0;
+    }
+    .active{
+      border-left: #42B3F0 solid 5px !important;
+      background-color: #49505770;
+    }
+  }
+}
+
+.ticketInfoContainer{
+  background-color: #04052e;
+  height: 100%;
+}
+
+.ticketInfoTable{
+  height: 90%;
+  overflow-y: scroll;
+}
