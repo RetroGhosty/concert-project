@@ -24,8 +24,8 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
   const { ticketTypeInfo, setTicketTypeInfo } = useContext(TicketContext);
 
   const dateValidityConvert = (startDate, endDate) => {
-    const parseStartDate = parse(startDate, "yyyy-dd-MM", new Date());
-    const parseEndDate = parse(endDate, "yyyy-dd-MM", new Date());
+    const parseStartDate = parse(startDate, "yyyy-MM-dd", new Date());
+    const parseEndDate = parse(endDate, "yyyy-MM-dd", new Date());
     return (
       <div>{`${format(parseStartDate, "MMM dd")} - ${format(
         parseEndDate,

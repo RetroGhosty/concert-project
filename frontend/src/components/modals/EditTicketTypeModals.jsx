@@ -38,8 +38,8 @@ const EditTicketTypeModals = (props) => {
         description: description,
         concertEvent: concertEvent,
         price: price,
-        dateValidRange1: format(startDate, "yyyy-dd-MM"),
-        dateValidRange2: format(endDate, "yyyy-dd-MM"),
+        dateValidRange1: format(startDate, "yyyy-MM-dd"),
+        dateValidRange2: format(endDate, "yyyy-MM-dd"),
       };
       axiosTokenIntercept
         .patch(`api/typeticket/${ticketTypeInfo.id}`, payload)
@@ -62,10 +62,10 @@ const EditTicketTypeModals = (props) => {
         concertEvent: props.concert_id,
       });
       setStartDate(
-        parse(ticketTypeInfo["dateValidRange1"], "yyyy-dd-MM", new Date())
+        parse(ticketTypeInfo["dateValidRange1"], "yyyy-MM-dd", new Date())
       );
       setEndDate(
-        parse(ticketTypeInfo["dateValidRange2"], "yyyy-dd-MM", new Date())
+        parse(ticketTypeInfo["dateValidRange2"], "yyyy-MM-dd", new Date())
       );
     }
   }, [ticketTypeInfo]);

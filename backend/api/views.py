@@ -154,6 +154,38 @@ class OrganizerConcertModification(APIView):
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
 
+    def delete(self, req):
+        try:
+            concertInfo = models.Concert.objects.filter(id=req.data["id"]).first()
+            if concertInfo is None:
+                responseDict = {
+                    "concertID": req.data["id"],
+                    "info": "No concert found",
+                }
+                return Response(data=responseDict, status=404)
+
+            concertMadeBy = concertInfo.organizerName.id
+            currentActiveAccount = req.user.id
+            # currentActiveAccount = 2  # Test account
+            if concertMadeBy != currentActiveAccount:
+                responseDict = {
+                    "madeBy": concertInfo.organizerName.id,
+                    "sessionUserID": req.user.id,
+                    "info": "Unauthorized Access",
+                }
+                return Response(data=responseDict, status=403)
+
+            concertInfo.delete()
+            responseDict = {
+                "concertID": req.data["id"],
+                "info": "Concert was successfully deleted",
+            }
+
+            return Response(data=responseDict, status=200)
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)
+
 
 # api/get/tickets/
 class GetTicketAll(APIView):
@@ -304,7 +336,7 @@ class OTPChangePassword(APIView):
 
 # api/typeticket/<int:id>"
 class TicketType(APIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, req, id):
         try:
@@ -419,6 +451,7 @@ class Ticket(APIView):
     def post(self, req, id):
         try:
             ticketTypeInfo = models.TicketType.objects.get(id=id)
+            print(ticketTypeInfo)
             ticketTypeMadeBy = ticketTypeInfo.organizerName.id
             currentActiveAccount = req.user.id
             # currentActiveAccount = 2  # Test account
