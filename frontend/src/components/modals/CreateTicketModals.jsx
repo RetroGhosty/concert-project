@@ -29,7 +29,7 @@ const CreateTicketModals = (props) => {
     onSubmit: (fieldValues) => {
       console.log(fieldValues);
       axiosTokenIntercept
-        .post(`/api/ticket/${currentTicketType}`, fieldValues)
+        .post(`/api/ticket/${currentTicketType}/`, fieldValues)
         .then((result) => {
           setIsModified(true);
           props.onHide();

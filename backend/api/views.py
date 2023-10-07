@@ -92,7 +92,7 @@ class GetUserDetails(APIView):
 class GetConcertAll(APIView):
     def get(self, req):
         try:
-            concerts = serializers.ConcertSerializer(
+            concerts = serializers.PublicConcertSerializer(
                 models.Concert.objects.all(), many=True
             )
             if not concerts:
@@ -104,7 +104,7 @@ class GetConcertAll(APIView):
             return Response(data=responseDict, status=500)
 
 
-# api/get/pub/concert/<int:concert_id>/
+# api/public/concert/<int:concert_id>/
 class GetConcert(APIView):
     def get(self, req, concert_id):
         try:
@@ -112,7 +112,7 @@ class GetConcert(APIView):
             if concerts is None:
                 return Response(data="Concert not found", status=404)
 
-            return Response(data=serializers.ConcertSerializer(concerts).data)
+            return Response(data=serializers.PublicConcertSerializer(concerts).data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
@@ -188,15 +188,17 @@ class OrganizerConcertModification(APIView):
 
 
 # api/get/tickets/
-class GetTicketAll(APIView):
-    def get(self, req):
+class GetTicketTypeAll(APIView):
+    def get(self, req, concert_id):
         try:
-            tickets = serializers.TicketSerializer(
-                models.Ticket.objects.all(), many=True
+            ticketType = models.TicketType.objects.filter(concertEvent=concert_id)
+            if len(ticketType) == 0:
+                return Response(data="No ticket type was found", status=404)
+
+            ticketTypeSerialized = serializers.PublicTicketTypeSerializer(
+                ticketType, many=True
             )
-            if not tickets:
-                return Response(data="No ticket was found", status=404)
-            return Response(tickets.data)
+            return Response(ticketTypeSerialized.data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)

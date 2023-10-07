@@ -9,13 +9,14 @@ import { Card, CardMedia, CardContent } from "@mui/material";
 import AuthContext from "../context/AuthContext";
 import { apiBaseUrl, apiStaticURL, mediaBaseUrl } from "../utils/APIUtils";
 import useFetchConcertPublic from "../customHooks/useFetchConcertPublic";
+import TicketTypeGuestView from "../components/TicketTypeGuestView";
 
 const ConcertGuestView = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   let { concertID } = useParams();
   const [concert, serverResponseCode] = useFetchConcertPublic(
-    `/api/get/pub/concert/${concertID}/`
+    `/api/public/concert/${concertID}/`
   );
 
   const IDUserState = () => {
@@ -30,7 +31,7 @@ const ConcertGuestView = () => {
 
   return (
     <>
-      <div className="row justify-content-between align-items-start">
+      <div className="row justify-content-between align-items-start mb-5">
         <Card className="col-lg-8 text-light p-0">
           <CardMedia
             component="img"
@@ -42,14 +43,13 @@ const ConcertGuestView = () => {
             <p>{concert["paragraph"]}</p>
           </CardContent>
         </Card>
-
         <div className="col-lg-3 bg-dark text-dark p-0 rounded">
           <div className="text-light p-4">
             <h4>Ticket Remaining</h4>
+
             <h3 className="d-inline pe-2">
               <ImTicket />
             </h3>
-
             <div className="mt-3">
               <PurpleButton
                 variant="contained"
@@ -61,6 +61,11 @@ const ConcertGuestView = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="row bg-dark text-light p-5 rounded">
+        <h2 className="mb-4 fw-semibold">Tickets</h2>
+        <TicketTypeGuestView concert_id={concert.id} />
       </div>
     </>
   );

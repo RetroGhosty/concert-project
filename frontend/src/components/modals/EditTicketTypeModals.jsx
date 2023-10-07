@@ -42,7 +42,7 @@ const EditTicketTypeModals = (props) => {
         dateValidRange2: format(endDate, "yyyy-MM-dd"),
       };
       axiosTokenIntercept
-        .patch(`api/typeticket/${ticketTypeInfo.id}`, payload)
+        .patch(`api/typeticket/${ticketTypeInfo.id}/`, payload)
         .then((result) => {
           setIsModified(true);
           props.onHide();

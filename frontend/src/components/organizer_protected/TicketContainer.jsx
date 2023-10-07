@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PurpleButton } from "../CustomizedMaterials";
+import { PurpleButton, RedButton } from "../CustomizedMaterials";
 
 import useFetchTicketType from "../../customHooks/useFetchTicketType";
 import TicketTable from "./TicketTable";
@@ -9,15 +9,18 @@ import { FaPesoSign } from "react-icons/fa6";
 import EditTicketTypeModals from "../modals/EditTicketTypeModals";
 import TicketContext from "../../context/TicketContext";
 import CreateTicketModals from "../modals/CreateTicketModals";
+import DeleteTicketTypeModals from "../modals/DeleteTicketTypeModals";
 
 const TicketContainer = ({ id, dateMin, dateMax }) => {
   const [data, serverResponseCode] = useFetchTicketType(
-    `/api/typeticket/${id}`
+    `/api/typeticket/${id}/`,
+    false
   );
   const [currentTicketTypeActive, setCurrentTicketTypeActive] = useState(0);
 
   const [modalCreateTicketType, setModalCreateTicketType] = useState(false);
   const [modalEditTicketType, setModalEditTicketType] = useState(false);
+  const [modalDeleteTicketType, setModalDeleteTicketType] = useState(false);
 
   const [modalGenerateTickets, setModalGenerateTickets] = useState(false);
 
@@ -73,11 +76,17 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
             Create ticket type
           </PurpleButton>
           <PurpleButton
-            className="p-2"
+            className="p-2 me-3"
             onClick={() => setModalEditTicketType(true)}
           >
             EDIT TICKET TYPE
           </PurpleButton>
+          <RedButton
+            className="p-2"
+            onClick={() => setModalDeleteTicketType(true)}
+          >
+            Delete Ticket Type
+          </RedButton>
         </div>
         <div className="ticketContainer row p-0 m-0">
           <div className="col-3 ticketType p-0 py-5">
@@ -132,6 +141,12 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
       <CreateTicketModals
         show={modalGenerateTickets}
         onHide={() => setModalGenerateTickets(false)}
+        currentTicketType={data[currentTicketTypeActive]?.id}
+      />
+      <DeleteTicketTypeModals
+        show={modalDeleteTicketType}
+        onHide={() => setModalDeleteTicketType(false)}
+        concert_id={id}
         currentTicketType={data[currentTicketTypeActive]?.id}
       />
     </>

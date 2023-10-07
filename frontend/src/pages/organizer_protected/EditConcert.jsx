@@ -27,7 +27,7 @@ const EditConcert = () => {
     setIsLoaded(false);
     const fetchConcert = async () => {
       await axiosTokenIntercept
-        .post(`/api/organizer/concert`, {
+        .post(`/api/organizer/concert/`, {
           organizer_id: user.user_id,
           concert_name: concertName,
         })
@@ -81,7 +81,7 @@ const EditConcert = () => {
     validationSchema: ConcertSchema,
     onSubmit: (values) => {
       axiosTokenIntercept
-        .patch(`/api/organizer/concert`, values, {
+        .patch(`/api/organizer/concert/`, values, {
           headers: {
             "Content-Type": "multipart/form-data",
           },

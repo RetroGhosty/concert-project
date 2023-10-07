@@ -39,6 +39,12 @@ class TicketTypeSerializer(serializers.ModelSerializer):
         }
 
 
+class PublicTicketTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TicketType
+        fields = ["name", "description", "price", "dateValidRange1", "dateValidRange2"]
+
+
 class TicketSerializer(serializers.ModelSerializer):
     boughtBy = serializers.SerializerMethodField()
 
@@ -90,10 +96,19 @@ class ConcertSerializer(serializers.ModelSerializer):
 
 
 class PublicConcertSerializer(serializers.ModelSerializer):
+    bannerImg = serializers.ImageField(use_url=False, required=False)
+
     class Meta:
         model = Concert
-        depth = 1
-        fields = ["name", "ticket", "limit", "bannerImg", "paragraph"]
+        fields = [
+            "id",
+            "name",
+            "bannerImg",
+            "paragraph",
+            "dateValidRange1",
+            "dateValidRange2",
+            "createdAt",
+        ]
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):

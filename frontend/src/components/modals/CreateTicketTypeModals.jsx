@@ -52,7 +52,7 @@ const CreateTicketTypeModals = (props) => {
         };
 
         axiosTokenIntercept
-          .post(`/api/typeticket/${concertEvent}`, payload)
+          .post(`/api/typeticket/${concertEvent}/`, payload)
           .then((result) => {
             setIsModified(true);
             props.onHide();

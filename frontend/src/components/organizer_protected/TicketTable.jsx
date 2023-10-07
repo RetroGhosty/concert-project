@@ -11,6 +11,7 @@ import TicketContext from "../../context/TicketContext";
 const TicketTable = ({ ticketTypeID, currentTicketTypeActive }) => {
   const [data, serverResponseCode] = useFetchTicketType(
     `/api/ticket/${ticketTypeID}`,
+    false,
     currentTicketTypeActive
   );
 
