@@ -198,6 +198,7 @@ class GetTicketTypeAll(APIView):
             ticketTypeSerialized = serializers.PublicTicketTypeSerializer(
                 ticketType, many=True
             )
+            print(ticketTypeSerialized.data)
             return Response(ticketTypeSerialized.data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
@@ -348,6 +349,7 @@ class TicketType(APIView):
             ticketTypeSerialized = serializers.TicketTypeSerializer(
                 (ticketType), many=True
             )
+
             return Response(data=ticketTypeSerialized.data, status=200)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
@@ -429,6 +431,7 @@ class TicketTypeAll(APIView):
             )
             if not ticketTypes:
                 return Response(data="No ticket type was found", status=404)
+
             return Response(ticketTypes.data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
