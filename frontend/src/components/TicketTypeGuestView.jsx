@@ -12,16 +12,25 @@ const TicketTypeGuestView = ({ concert_id }) => {
     `/api/public/typeticket/${concert_id}/`,
     true
   );
+
+  console.log(data);
+
   return (
     <>
       {data?.map((ticketType, uid) => (
-        <div key={uid} className="col-12 col-md-6 col-lg-3 mb-5 ">
+        <div key={uid} className="col-12 col-lg-6 mb-5 ">
           <motion.div
-            initial={{ backgroundColor: "#111111" }}
-            whileHover={{ backgroundColor: "#444444", scale: 1.05 }}
+            initial={
+              !ticketType.isAvailable
+                ? { backgroundColor: "#343434" }
+                : { backgroundColor: "#111111" }
+            }
+            whileHover={!ticketType.isAvailable ? null : { scale: 1.05 }}
             className="p-4 rounded user-select-none"
           >
-            <b>{ticketType.name}</b>
+            <b>
+              {ticketType.name} {!ticketType.isAvailable ? "[Sold out]" : null}{" "}
+            </b>
             <div>
               <span className="pe-2">
                 {format(

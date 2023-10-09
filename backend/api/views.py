@@ -187,7 +187,7 @@ class OrganizerConcertModification(APIView):
             return Response(data=responseDict, status=500)
 
 
-# api/get/tickets/
+# api/public/typeticket/<int:concert_id>
 class GetTicketTypeAll(APIView):
     def get(self, req, concert_id):
         try:
@@ -198,7 +198,6 @@ class GetTicketTypeAll(APIView):
             ticketTypeSerialized = serializers.PublicTicketTypeSerializer(
                 ticketType, many=True
             )
-            print(ticketTypeSerialized.data)
             return Response(ticketTypeSerialized.data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}

@@ -40,9 +40,12 @@ class TicketTypeSerializer(serializers.ModelSerializer):
 
 
 class PublicTicketTypeSerializer(serializers.ModelSerializer):
+    isAvailable = serializers.SerializerMethodField()
     class Meta:
         model = TicketType
-        fields = ["name", "description", "price", "dateValidRange1", "dateValidRange2"]
+        fields = ["name","description", "price", "dateValidRange1", "dateValidRange2", "isAvailable"]
+    def get_isAvailable(self, obj):
+        return Ticket.objects.filter(ticketType=obj).exists()
 
 
 class TicketSerializer(serializers.ModelSerializer):

@@ -1,3 +1,5 @@
-testenv/
+env/
 nginx
 .vscode/
+production/
+development/
