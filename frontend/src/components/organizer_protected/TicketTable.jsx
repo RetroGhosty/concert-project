@@ -1,80 +1,43 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import useFetchTicketType from "../../customHooks/useFetchTicketType";
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+
+import { DataTable } from "primereact/datatable";
+import { InputSwitch } from "primereact/inputswitch";
+import { Column } from "primereact/column";
+import "primereact/resources/themes/lara-light-teal/theme.css";
 import TicketContext from "../../context/TicketContext";
 
 const TicketTable = ({ ticketTypeID, currentTicketTypeActive }) => {
-  const [data, serverResponseCode] = useFetchTicketType(
+  const [responseData, serverResponseCode] = useFetchTicketType(
     `/api/ticket/${ticketTypeID}`,
     false,
     currentTicketTypeActive
   );
 
-  /** @type import('@tanstack/react-table').ColumnDef<any>*/
-  const columns = [
-    {
-      header: "ID",
-      accessorKey: "id",
-    },
-    {
-      header: "BOUGHT BY",
-      accessorKey: "boughtBy",
-    },
-    {
-      header: "IS USED",
-      accessorKey: "isUsed",
-    },
-    {
-      header: "DATE CREATED",
-      accessorKey: "date_created",
-    },
-  ];
+  const { selectedTickets, setSelectedTickets } = useContext(TicketContext);
 
-  const table = useReactTable({
-    data,
-    columns,
-    flexRender,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  const data = useMemo(() => responseData, [responseData]);
 
   if (serverResponseCode !== 200) {
     return <>No tickets found</>;
   }
   return (
     <div className="ticketInfoTable me-3">
-      <table className="table table-dark table-striped">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <DataTable
+        value={data}
+        stripedRows
+        removableSort
+        showGridlines
+        selection={selectedTickets}
+        onSelectionChange={(e) => setSelectedTickets(e.value)}
+        dataKey="id"
+      >
+        <Column selectionMode="multiple"></Column>
+        <Column field="id" header="ID" sortable></Column>
+        <Column field="date_created" header="Date Created" sortable></Column>
+        <Column field="isUsed" header="Is Used" sortable></Column>
+        <Column field="boughtBy" header="Ticket Claimed by" sortable></Column>
+      </DataTable>
     </div>
   );
 };

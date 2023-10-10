@@ -10,6 +10,7 @@ export const TicketProvider = ({ children }) => {
   const [isModified, setIsModified] = useState(false);
   const [dateMin, setDateMin] = useState();
   const [dateMax, setDateMax] = useState();
+  const [selectedTickets, setSelectedTickets] = useState([]);
   let content = {
     ticketTypeList: ticketTypeList,
     setTicketTypeList: setTicketTypeList,
@@ -21,6 +22,8 @@ export const TicketProvider = ({ children }) => {
     setDateMax: setDateMax,
     ticketTypeInfo: ticketTypeInfo,
     setTicketTypeInfo: setTicketTypeInfo,
+    selectedTickets: selectedTickets,
+    setSelectedTickets: setSelectedTickets,
   };
 
   return (

@@ -176,4 +176,8 @@ ul {
 .ticketInfoTable{
   height: 90%;
   overflow-y: scroll;
+  position: relative;
+  table{
+    position: absolute;
+  }
 }

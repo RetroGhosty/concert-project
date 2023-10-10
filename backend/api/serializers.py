@@ -45,7 +45,7 @@ class PublicTicketTypeSerializer(serializers.ModelSerializer):
         model = TicketType
         fields = ["name","description", "price", "dateValidRange1", "dateValidRange2", "isAvailable"]
     def get_isAvailable(self, obj):
-        return Ticket.objects.filter(ticketType=obj).exists()
+        return Ticket.objects.filter(ticketType=obj).filter(boughtBy=None).exists()
 
 
 class TicketSerializer(serializers.ModelSerializer):

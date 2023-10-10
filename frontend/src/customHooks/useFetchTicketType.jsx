@@ -7,7 +7,7 @@ import TicketContext from "../context/TicketContext";
 const useFetchTicketType = (link, isPublic, currentTicketTypeActive) => {
   const { ticketTypeList, setTicketTypeList, isModified, setIsModified } =
     useContext(TicketContext);
-  const [data, setData] = useState();
+  const [responseData, setResponseData] = useState();
   const [serverResponseCode, setServerResponseCode] = useState(undefined);
   axios.defaults.baseURL = apiBaseUrl;
 
@@ -16,12 +16,11 @@ const useFetchTicketType = (link, isPublic, currentTicketTypeActive) => {
       axiosTokenIntercept
         .get(link)
         .then((result) => {
-          setData(result.data);
+          setResponseData(result.data);
           setTicketTypeList(result.data);
           setServerResponseCode(result.status);
         })
         .catch((err) => {
-          console.log(err);
           if (err.response.status !== undefined) {
             setServerResponseCode(err.response.status);
           }
@@ -30,12 +29,11 @@ const useFetchTicketType = (link, isPublic, currentTicketTypeActive) => {
       axios
         .get(link)
         .then((result) => {
-          setData(result.data);
+          setResponseData(result.data);
           setTicketTypeList(result.data);
           setServerResponseCode(result.status);
         })
         .catch((err) => {
-          console.log(err);
           if (err.response.status !== undefined) {
             setServerResponseCode(err.response.status);
           }
@@ -46,7 +44,7 @@ const useFetchTicketType = (link, isPublic, currentTicketTypeActive) => {
     };
   }, [currentTicketTypeActive, isModified]);
 
-  return [data, serverResponseCode];
+  return [responseData, serverResponseCode];
 };
 
 export default useFetchTicketType;
