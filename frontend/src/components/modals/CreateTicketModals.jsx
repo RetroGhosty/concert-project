@@ -27,7 +27,6 @@ const CreateTicketModals = (props) => {
       howManyTicket: 1,
     },
     onSubmit: (fieldValues) => {
-      console.log(fieldValues);
       axiosTokenIntercept
         .post(`/api/ticket/${currentTicketType}/`, fieldValues)
         .then((result) => {

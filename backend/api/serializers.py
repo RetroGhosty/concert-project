@@ -70,6 +70,7 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class ConcertSerializer(serializers.ModelSerializer):
     organizerName = serializers.SerializerMethodField()
+    organizerId = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
     bannerImg = serializers.ImageField(use_url=False, required=False)
 
     class Meta:
@@ -79,13 +80,13 @@ class ConcertSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
-            "limit",
             "bannerImg",
             "paragraph",
             "dateValidRange1",
             "dateValidRange2",
             "createdAt",
             "organizerName",
+            'organizerId'
         ]
 
     def get_organizerName(self, obj):
@@ -96,6 +97,12 @@ class ConcertSerializer(serializers.ModelSerializer):
             }
             return dictionaryResponse["name"]
         return None
+
+    def create(self, validated_data):
+        organizer_id = validated_data.pop('organizerId')
+        organizer = User.objects.get(id=organizer_id)
+        concert = Concert.objects.create(organizerName=organizer, **validated_data)
+        return concert
 
 
 class PublicConcertSerializer(serializers.ModelSerializer):

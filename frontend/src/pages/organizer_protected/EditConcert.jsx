@@ -5,12 +5,13 @@ import AuthContext from "../../context/AuthContext";
 import NotFound from "../NotFound";
 import { useFormik } from "formik";
 import { ConcertSchema } from "../../schema/ConcertSchema";
-import { PurpleButton } from "../../components/CustomizedMaterials";
+import { PurpleButton, RedButton } from "../../components/CustomizedMaterials";
 import ProfileBackgroundHero from "../../components/ProfileBackgroundHero";
 import { imageUploadPreview } from "../../utils/DataUtils";
 import { apiStaticURL, mediaBaseUrl } from "../../utils/APIUtils";
 import TicketContainer from "../../components/organizer_protected/TicketContainer";
 import TicketContext from "../../context/TicketContext";
+import DeleteConcertModals from "../../components/modals/DeleteConcertModals";
 
 const EditConcert = () => {
   const { concertName } = useParams();
@@ -22,16 +23,17 @@ const EditConcert = () => {
   const [data, setData] = useState();
 
   const { setDateMin, setDateMax } = useContext(TicketContext);
+  const [modalConcertDelete, setModalConcertDelete] = useState(false);
 
   useEffect(() => {
     setIsLoaded(false);
     const fetchConcert = async () => {
       await axiosTokenIntercept
-        .post(`/api/organizer/concert/`, {
-          organizer_id: user.user_id,
-          concert_name: concertName,
+        .get(`/api/organizer/concert/`, {
+          params: { concert_name: concertName },
         })
         .then((result) => {
+          console.log(result.data);
           setConcertFields(result.data);
           setDateMin(result.data["dateValidRange1"]);
           setDateMax(result.data["dateValidRange2"]);
@@ -102,7 +104,15 @@ const EditConcert = () => {
     return (
       <>
         <ProfileBackgroundHero>
-          <h1 className="mb-4">Edit Concert</h1>
+          <div className="d-flex align-items-end justify-content-between mb-4 ">
+            <h1 className="m-0 p-0">Edit Concert</h1>
+            <RedButton
+              className="p-3"
+              onClick={() => setModalConcertDelete(true)}
+            >
+              DELETE EVENT
+            </RedButton>
+          </div>
           <form onSubmit={handleSubmit} className="border-top border-info pt-3">
             <div className="mb-3">
               <div className="aspect-ratio-container">
@@ -205,6 +215,12 @@ const EditConcert = () => {
           <h1 className="row mb-4 m-0">Ticket Manager</h1>
           <TicketContainer id={concertFields.id} />
         </ProfileBackgroundHero>
+
+        <DeleteConcertModals
+          show={modalConcertDelete}
+          onHide={() => setModalConcertDelete(false)}
+          concertId={concertFields?.id}
+        />
       </>
     );
   } else if (concertFields === 404) {

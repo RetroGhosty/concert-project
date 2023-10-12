@@ -16,8 +16,7 @@ class User(AbstractUser):
 
 class Concert(models.Model):
     name = models.CharField(max_length=100)
-    limit = models.IntegerField(null=True)
-    organizerName = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    organizerName = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     bannerImg = models.ImageField(
         upload_to="concert_banners", default="concert_banners/default.jpg"
     )

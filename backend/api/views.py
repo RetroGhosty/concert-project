@@ -57,7 +57,7 @@ class GetUserAll(APIView):
             return Response(data=responseDict, status=500)
 
 
-# User detail endpoints
+# User detail 
 # api/user/
 class GetUserDetails(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -122,21 +122,43 @@ class GetConcert(APIView):
 class OrganizerConcertModification(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, req):
+
+
+    def get(self, req):
         try:
             concert = models.Concert.objects.filter(
-                name=req.data["concert_name"]
+                name=req.GET['concert_name']
             ).first()
             if concert is None:
                 return Response(data="Concert not found", status=404)
             serializedConcert = serializers.ConcertSerializer(concert).data
-            if int(req.data["organizer_id"]) != int(req.user.id):
+
+            if int(concert.organizerName.id) != int(req.user.id):
                 return Response(data="Unauthorized access", status=403)
             return Response(data=serializedConcert, status=200)
 
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
+
+
+    def post(self, req):
+        try:
+
+            concertSerialized = serializers.ConcertSerializer(data=req.data)
+            if (concertSerialized.is_valid()):
+                concertSerialized.save()
+                return Response(data={"info": "Concert successfully made"}, status=200)
+
+            responseDict = {
+                'info': 'Data is not valid',
+                'errors': concertSerialized.errors
+            }
+            return Response(data=responseDict, status=403)
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)
+
 
     def patch(self, req):
         try:
@@ -215,7 +237,7 @@ class GetTicketOfOrganizer(APIView):
             )
             if not concerts:
                 return Response(
-                    data="No ticket was found in regards to this organizer", status=404
+                    data="No concert was found in regards to this organizer", status=404
                 )
 
             return Response(concerts.data)

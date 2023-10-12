@@ -2,7 +2,6 @@ import React, { useContext, useMemo, useState } from "react";
 import useFetchTicketType from "../../customHooks/useFetchTicketType";
 
 import { DataTable } from "primereact/datatable";
-import { InputSwitch } from "primereact/inputswitch";
 import { Column } from "primereact/column";
 import "primereact/resources/themes/lara-light-teal/theme.css";
 import TicketContext from "../../context/TicketContext";

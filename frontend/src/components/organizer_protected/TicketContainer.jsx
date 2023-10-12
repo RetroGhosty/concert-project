@@ -63,7 +63,6 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
         data: payload,
       })
       .then((response) => {
-        console.log(response);
         setIsModified(true);
         setSelectedTickets([]);
       })

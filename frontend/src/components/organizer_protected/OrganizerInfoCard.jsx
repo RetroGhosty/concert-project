@@ -9,6 +9,7 @@ import TextField from "@mui/material/TextField";
 import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa6";
 import { PurpleButton } from "../CustomizedMaterials";
 import { motion } from "framer-motion";
+import CreateConcertModals from "../modals/CreateConcertModals";
 
 const OrganizerInfo_card = () => {
   const { concert, setConcert } = useContext(OrganizerContext);
@@ -175,6 +176,8 @@ const OrganizerInfo_card = () => {
     }
   };
 
+  const [createConcertModalState, setCreateConcertModalState] = useState(false);
+
   if (filteredItems !== undefined && userDeepDetails !== undefined) {
     const firstLetter = userDeepDetails.username.charAt(0);
     const firstLetterCap = firstLetter.toUpperCase();
@@ -218,7 +221,12 @@ const OrganizerInfo_card = () => {
               Revenue{stateChecker("revenue", "icon")}
             </li>
           </ul>
-          <PurpleButton className="mt-4 p-3">Create Concert Event</PurpleButton>
+          <PurpleButton
+            className="mt-4 p-3"
+            onClick={() => setCreateConcertModalState(true)}
+          >
+            Create Concert Event
+          </PurpleButton>
         </div>
         <div className="col ms-0 ms-lg-5">
           <motion.div layout>
@@ -252,6 +260,10 @@ const OrganizerInfo_card = () => {
             ))}
           </motion.div>
         </div>
+        <CreateConcertModals
+          show={createConcertModalState}
+          onHide={() => setCreateConcertModalState(false)}
+        />
       </div>
     );
   } else {
