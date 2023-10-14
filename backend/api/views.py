@@ -57,7 +57,7 @@ class GetUserAll(APIView):
             return Response(data=responseDict, status=500)
 
 
-# User detail endpoints
+# User detail 
 # api/user/
 class GetUserDetails(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -92,7 +92,7 @@ class GetUserDetails(APIView):
 class GetConcertAll(APIView):
     def get(self, req):
         try:
-            concerts = serializers.ConcertSerializer(
+            concerts = serializers.PublicConcertSerializer(
                 models.Concert.objects.all(), many=True
             )
             if not concerts:
@@ -104,7 +104,7 @@ class GetConcertAll(APIView):
             return Response(data=responseDict, status=500)
 
 
-# api/get/pub/concert/<int:concert_id>/
+# api/public/concert/<int:concert_id>/
 class GetConcert(APIView):
     def get(self, req, concert_id):
         try:
@@ -112,7 +112,7 @@ class GetConcert(APIView):
             if concerts is None:
                 return Response(data="Concert not found", status=404)
 
-            return Response(data=serializers.ConcertSerializer(concerts).data)
+            return Response(data=serializers.PublicConcertSerializer(concerts).data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
@@ -122,21 +122,43 @@ class GetConcert(APIView):
 class OrganizerConcertModification(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, req):
+
+
+    def get(self, req):
         try:
             concert = models.Concert.objects.filter(
-                name=req.data["concert_name"]
+                name=req.GET['concert_name']
             ).first()
             if concert is None:
                 return Response(data="Concert not found", status=404)
             serializedConcert = serializers.ConcertSerializer(concert).data
-            if int(req.data["organizer_id"]) != int(req.user.id):
+
+            if int(concert.organizerName.id) != int(req.user.id):
                 return Response(data="Unauthorized access", status=403)
             return Response(data=serializedConcert, status=200)
 
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
+
+
+    def post(self, req):
+        try:
+
+            concertSerialized = serializers.ConcertSerializer(data=req.data)
+            if (concertSerialized.is_valid()):
+                concertSerialized.save()
+                return Response(data={"info": "Concert successfully made"}, status=200)
+
+            responseDict = {
+                'info': 'Data is not valid',
+                'errors': concertSerialized.errors
+            }
+            return Response(data=responseDict, status=403)
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)
+
 
     def patch(self, req):
         try:
@@ -154,17 +176,51 @@ class OrganizerConcertModification(APIView):
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
 
-
-# api/get/tickets/
-class GetTicketAll(APIView):
-    def get(self, req):
+    def delete(self, req):
         try:
-            tickets = serializers.TicketSerializer(
-                models.Ticket.objects.all(), many=True
+            concertInfo = models.Concert.objects.filter(id=req.data["id"]).first()
+            if concertInfo is None:
+                responseDict = {
+                    "concertID": req.data["id"],
+                    "info": "No concert found",
+                }
+                return Response(data=responseDict, status=404)
+
+            concertMadeBy = concertInfo.organizerName.id
+            currentActiveAccount = req.user.id
+            # currentActiveAccount = 2  # Test account
+            if concertMadeBy != currentActiveAccount:
+                responseDict = {
+                    "madeBy": concertInfo.organizerName.id,
+                    "sessionUserID": req.user.id,
+                    "info": "Unauthorized Access",
+                }
+                return Response(data=responseDict, status=403)
+
+            concertInfo.delete()
+            responseDict = {
+                "concertID": req.data["id"],
+                "info": "Concert was successfully deleted",
+            }
+
+            return Response(data=responseDict, status=200)
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)
+
+
+# api/public/typeticket/<int:concert_id>
+class GetTicketTypeAll(APIView):
+    def get(self, req, concert_id):
+        try:
+            ticketType = models.TicketType.objects.filter(concertEvent=concert_id)
+            if len(ticketType) == 0:
+                return Response(data="No ticket type was found", status=404)
+
+            ticketTypeSerialized = serializers.PublicTicketTypeSerializer(
+                ticketType, many=True
             )
-            if not tickets:
-                return Response(data="No ticket was found", status=404)
-            return Response(tickets.data)
+            return Response(ticketTypeSerialized.data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
@@ -181,7 +237,7 @@ class GetTicketOfOrganizer(APIView):
             )
             if not concerts:
                 return Response(
-                    data="No ticket was found in regards to this organizer", status=404
+                    data="No concert was found in regards to this organizer", status=404
                 )
 
             return Response(concerts.data)
@@ -304,7 +360,7 @@ class OTPChangePassword(APIView):
 
 # api/typeticket/<int:id>"
 class TicketType(APIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, req, id):
         try:
@@ -314,6 +370,7 @@ class TicketType(APIView):
             ticketTypeSerialized = serializers.TicketTypeSerializer(
                 (ticketType), many=True
             )
+
             return Response(data=ticketTypeSerialized.data, status=200)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
@@ -395,6 +452,7 @@ class TicketTypeAll(APIView):
             )
             if not ticketTypes:
                 return Response(data="No ticket type was found", status=404)
+
             return Response(ticketTypes.data)
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
@@ -419,6 +477,7 @@ class Ticket(APIView):
     def post(self, req, id):
         try:
             ticketTypeInfo = models.TicketType.objects.get(id=id)
+            print(ticketTypeInfo)
             ticketTypeMadeBy = ticketTypeInfo.organizerName.id
             currentActiveAccount = req.user.id
             # currentActiveAccount = 2  # Test account

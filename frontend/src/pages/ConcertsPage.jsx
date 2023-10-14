@@ -43,14 +43,6 @@ const ConcertsPage = () => {
                       ${format(new Date(data["dateValidRange2"]), "MMM dd")}`}
                     </span>
                   </div>
-                  {/**
-                   * 
-                   <div className="col-auto text-end">
-                     <h5 className="d-inline p-2"><ImTicket/></h5>
-                     <span>{data.ticket.length} / {data.limit}</span>
-                   </div>
-                   * 
-                   */}
                 </div>
               </div>
             </CardContent>

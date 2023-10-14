@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { PurpleButton } from "../CustomizedMaterials";
+import { PurpleButton, RedButton } from "../CustomizedMaterials";
 
 import useFetchTicketType from "../../customHooks/useFetchTicketType";
 import TicketTable from "./TicketTable";
@@ -9,23 +9,37 @@ import { FaPesoSign } from "react-icons/fa6";
 import EditTicketTypeModals from "../modals/EditTicketTypeModals";
 import TicketContext from "../../context/TicketContext";
 import CreateTicketModals from "../modals/CreateTicketModals";
+import DeleteTicketTypeModals from "../modals/DeleteTicketTypeModals";
+import axiosTokenIntercept from "../../utils/AxiosInterceptor";
 
 const TicketContainer = ({ id, dateMin, dateMax }) => {
-  const [data, serverResponseCode] = useFetchTicketType(
-    `/api/typeticket/${id}`
+  const [responseData, serverResponseCode] = useFetchTicketType(
+    `/api/typeticket/${id}/`,
+    false
   );
   const [currentTicketTypeActive, setCurrentTicketTypeActive] = useState(0);
 
   const [modalCreateTicketType, setModalCreateTicketType] = useState(false);
   const [modalEditTicketType, setModalEditTicketType] = useState(false);
-
+  const [modalDeleteTicketType, setModalDeleteTicketType] = useState(false);
   const [modalGenerateTickets, setModalGenerateTickets] = useState(false);
 
-  const { ticketTypeInfo, setTicketTypeInfo } = useContext(TicketContext);
+  const {
+    ticketTypeInfo,
+    setTicketTypeInfo,
+    selectedTickets,
+    setSelectedTickets,
+    setIsModified,
+  } = useContext(TicketContext);
+
+  const changeCurrentTicketTypeState = (item_id) => {
+    setCurrentTicketTypeActive(item_id);
+    setSelectedTickets([]);
+  };
 
   const dateValidityConvert = (startDate, endDate) => {
-    const parseStartDate = parse(startDate, "yyyy-dd-MM", new Date());
-    const parseEndDate = parse(endDate, "yyyy-dd-MM", new Date());
+    const parseStartDate = parse(startDate, "yyyy-MM-dd", new Date());
+    const parseEndDate = parse(endDate, "yyyy-MM-dd", new Date());
     return (
       <div>{`${format(parseStartDate, "MMM dd")} - ${format(
         parseEndDate,
@@ -34,11 +48,52 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
     );
   };
 
-  useEffect(() => {
-    if (data !== undefined) {
-      setTicketTypeInfo(data[currentTicketTypeActive]);
+  const deleteSelectedTicket = (ticketSelectedArr) => {
+    const ticketIdArr = [];
+    for (let i = 0; i < ticketSelectedArr.length; i++) {
+      ticketIdArr.push(ticketSelectedArr[i].id);
     }
-  }, [currentTicketTypeActive, data, ticketTypeInfo]);
+
+    const payload = {
+      ticketIdList: ticketIdArr,
+    };
+
+    axiosTokenIntercept
+      .delete(`/api/ticket/${responseData[currentTicketTypeActive].id}`, {
+        data: payload,
+      })
+      .then((response) => {
+        setIsModified(true);
+        setSelectedTickets([]);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
+
+  const isTicketSelectedExistBtn = (ticketSelectedArr) => {
+    if (ticketSelectedArr.length !== 0) {
+      return (
+        <>
+          <RedButton
+            className="me-2"
+            onClick={() => deleteSelectedTicket(ticketSelectedArr)}
+          >
+            Delete
+          </RedButton>
+          <span>Selected [ {ticketSelectedArr.length} ] tickets</span>
+        </>
+      );
+    } else {
+      return <>No ticket selected</>;
+    }
+  };
+
+  useEffect(() => {
+    if (responseData !== undefined) {
+      setTicketTypeInfo(responseData[currentTicketTypeActive]);
+    }
+  }, [currentTicketTypeActive, responseData, ticketTypeInfo]);
 
   if (serverResponseCode !== 200) {
     return (
@@ -73,23 +128,29 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
             Create ticket type
           </PurpleButton>
           <PurpleButton
-            className="p-2"
+            className="p-2 me-3"
             onClick={() => setModalEditTicketType(true)}
           >
             EDIT TICKET TYPE
           </PurpleButton>
+          <RedButton
+            className="p-2"
+            onClick={() => setModalDeleteTicketType(true)}
+          >
+            Delete Ticket Type
+          </RedButton>
         </div>
         <div className="ticketContainer row p-0 m-0">
           <div className="col-3 ticketType p-0 py-5">
             <ul className="justify-content-start">
-              {data.map((item, item_id) => (
+              {responseData.map((item, item_id) => (
                 <li
                   className={
                     currentTicketTypeActive === item_id ? "mb-2 active" : "mb-2"
                   }
                   key={item_id}
                   onClick={() => {
-                    setCurrentTicketTypeActive(item_id);
+                    changeCurrentTicketTypeState(item_id);
                   }}
                 >
                   <span>{item.name}</span>
@@ -103,17 +164,23 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
           </div>
           <div className="col ticketInfoContainer p-0 ps-4 py-5">
             <div className="d-flex align-items-center justify-content-between me-3 mb-4">
-              <PurpleButton onClick={() => setModalGenerateTickets(true)}>
-                Generate tickets
-              </PurpleButton>
+              <span>
+                <PurpleButton
+                  className="me-2"
+                  onClick={() => setModalGenerateTickets(true)}
+                >
+                  Generate tickets
+                </PurpleButton>
+                {isTicketSelectedExistBtn(selectedTickets)}
+              </span>
               <span className="px-3 py-2 rounded bg-primary d-flex align-items-center justify-content-between">
                 <FaPesoSign className="me-2" />
-                {data[currentTicketTypeActive]?.price}
+                {responseData[currentTicketTypeActive]?.price}
               </span>
             </div>
 
             <TicketTable
-              ticketTypeID={data[currentTicketTypeActive]?.id}
+              ticketTypeID={responseData[currentTicketTypeActive]?.id}
               currentTicketTypeActive={currentTicketTypeActive}
             />
           </div>
@@ -132,7 +199,13 @@ const TicketContainer = ({ id, dateMin, dateMax }) => {
       <CreateTicketModals
         show={modalGenerateTickets}
         onHide={() => setModalGenerateTickets(false)}
-        currentTicketType={data[currentTicketTypeActive]?.id}
+        currentTicketType={responseData[currentTicketTypeActive]?.id}
+      />
+      <DeleteTicketTypeModals
+        show={modalDeleteTicketType}
+        onHide={() => setModalDeleteTicketType(false)}
+        concert_id={id}
+        currentTicketType={responseData[currentTicketTypeActive]?.id}
       />
     </>
   );

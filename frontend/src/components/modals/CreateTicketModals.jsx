@@ -14,6 +14,7 @@ const CreateTicketModals = (props) => {
   const {
     values,
     setValues,
+    setErrors,
     handleBlur,
     handleChange,
     handleSubmit,
@@ -27,14 +28,14 @@ const CreateTicketModals = (props) => {
       howManyTicket: 1,
     },
     onSubmit: (fieldValues) => {
-      console.log(fieldValues);
       axiosTokenIntercept
-        .post(`/api/ticket/${currentTicketType}`, fieldValues)
+        .post(`/api/ticket/${currentTicketType}/`, fieldValues)
         .then((result) => {
           setIsModified(true);
           props.onHide();
         })
         .catch((err) => {
+          setErrors(err.results.data["errors"]);
           console.log(err.result);
         });
     },

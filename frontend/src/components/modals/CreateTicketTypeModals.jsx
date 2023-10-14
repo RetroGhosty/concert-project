@@ -8,10 +8,12 @@ import { ticketTypeSchema } from "../../schema/TicketSchemas";
 import { format, parse, parseISO } from "date-fns";
 import axiosTokenIntercept from "../../utils/AxiosInterceptor";
 import TicketContext from "../../context/TicketContext";
+import AuthContext from "../../context/AuthContext";
 
 const CreateTicketTypeModals = (props) => {
   const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(null);
+  const [endDate, setEndDate] = useState(new Date());
+  const { user } = useContext(AuthContext);
 
   const { dateMin, dateMax, setIsModified } = useContext(TicketContext);
 
@@ -24,42 +26,51 @@ const CreateTicketTypeModals = (props) => {
   useEffect(() => {
     if (dateMin !== undefined) {
       setStartDate(new Date(dateMin));
+      setEndDate(new Date(dateMin));
     }
   }, [dateMin]);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      validationSchema: ticketTypeSchema,
-      initialValues: {
-        ticketName: "",
-        description: "",
-        price: "",
-        concertEvent: props.concert_id,
-      },
-      onSubmit: (values) => {
-        const { ticketName, description, concertEvent, price } = values;
-        const payload = {
-          name: ticketName,
-          description: description,
-          concertEvent: concertEvent,
-          price: price,
-          dateValidRange1: format(startDate, "yyyy-dd-MM"),
-          dateValidRange2: format(endDate, "yyyy-dd-MM"),
-        };
+  const {
+    values,
+    errors,
+    touched,
+    setErrors,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    validationSchema: ticketTypeSchema,
+    initialValues: {
+      ticketName: "",
+      description: "",
+      price: "",
+      concertEvent: props.concert_id,
+    },
+    onSubmit: (values) => {
+      const { ticketName, description, concertEvent, price } = values;
+      const payload = {
+        name: ticketName,
+        description: description,
+        concertEvent: concertEvent,
+        price: price,
+        dateValidRange1: format(startDate, "yyyy-MM-dd"),
+        dateValidRange2: format(endDate, "yyyy-MM-dd"),
+        organizerName: user.user_id,
+      };
 
-        axiosTokenIntercept
-          .post(`/api/typeticket/${concertEvent}`, payload)
-          .then((result) => {
-            setIsModified(true);
-            props.onHide();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      },
-    });
+      axiosTokenIntercept
+        .post(`/api/typeticket/${concertEvent}/`, payload)
+        .then((result) => {
+          setIsModified(true);
+          props.onHide();
+        })
+        .catch((err) => {
+          setErrors(err.results.data["errors"]);
+        });
+    },
+  });
 
-  if (dateMin === undefined) {
+  if (dateMin === undefined && user === undefined) {
     return (
       <Modal {...props} size="lg" centered data-bs-theme="dark">
         <Modal.Header className="bg-dark text-light p-4">
