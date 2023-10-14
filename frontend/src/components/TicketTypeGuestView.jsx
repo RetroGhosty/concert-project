@@ -13,12 +13,14 @@ const TicketTypeGuestView = ({ concert_id }) => {
     true
   );
 
-  console.log(data);
+  if (data === undefined) {
+    return <>No tickets available</>;
+  }
 
   return (
     <>
       {data?.map((ticketType, uid) => (
-        <div key={uid} className="col-12 col-lg-6 mb-5 ">
+        <div key={uid} className="col-12 p-0 col-lg-6 mb-5">
           <motion.div
             initial={
               !ticketType.isAvailable

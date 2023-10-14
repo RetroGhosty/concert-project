@@ -64,7 +64,7 @@ const ConcertGuestView = () => {
       </div>
 
       <div className="row bg-dark text-light p-5 rounded">
-        <h2 className="mb-4 fw-semibold">Tickets</h2>
+        <h2 className="mb-4 p-0 fw-semibold">Tickets</h2>
         <TicketTypeGuestView concert_id={concert.id} />
       </div>
     </>

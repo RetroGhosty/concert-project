@@ -18,6 +18,7 @@ const EditTicketTypeModals = (props) => {
   const {
     values,
     setValues,
+    setErrors,
     errors,
     touched,
     handleBlur,
@@ -48,7 +49,7 @@ const EditTicketTypeModals = (props) => {
           props.onHide();
         })
         .catch((err) => {
-          console.log(err.response.status);
+          setErrors(err.results.data["errors"]);
         });
     },
   });

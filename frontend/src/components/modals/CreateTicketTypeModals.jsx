@@ -30,38 +30,45 @@ const CreateTicketTypeModals = (props) => {
     }
   }, [dateMin]);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      validationSchema: ticketTypeSchema,
-      initialValues: {
-        ticketName: "",
-        description: "",
-        price: "",
-        concertEvent: props.concert_id,
-      },
-      onSubmit: (values) => {
-        const { ticketName, description, concertEvent, price } = values;
-        const payload = {
-          name: ticketName,
-          description: description,
-          concertEvent: concertEvent,
-          price: price,
-          dateValidRange1: format(startDate, "yyyy-MM-dd"),
-          dateValidRange2: format(endDate, "yyyy-MM-dd"),
-          organizerName: user.user_id,
-        };
+  const {
+    values,
+    errors,
+    touched,
+    setErrors,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    validationSchema: ticketTypeSchema,
+    initialValues: {
+      ticketName: "",
+      description: "",
+      price: "",
+      concertEvent: props.concert_id,
+    },
+    onSubmit: (values) => {
+      const { ticketName, description, concertEvent, price } = values;
+      const payload = {
+        name: ticketName,
+        description: description,
+        concertEvent: concertEvent,
+        price: price,
+        dateValidRange1: format(startDate, "yyyy-MM-dd"),
+        dateValidRange2: format(endDate, "yyyy-MM-dd"),
+        organizerName: user.user_id,
+      };
 
-        axiosTokenIntercept
-          .post(`/api/typeticket/${concertEvent}/`, payload)
-          .then((result) => {
-            setIsModified(true);
-            props.onHide();
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      },
-    });
+      axiosTokenIntercept
+        .post(`/api/typeticket/${concertEvent}/`, payload)
+        .then((result) => {
+          setIsModified(true);
+          props.onHide();
+        })
+        .catch((err) => {
+          setErrors(err.results.data["errors"]);
+        });
+    },
+  });
 
   if (dateMin === undefined && user === undefined) {
     return (

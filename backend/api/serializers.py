@@ -99,7 +99,7 @@ class ConcertSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-        organizer_id = validated_data.pop('organizerId')
+        organizer_id = validated_data.pop('organizerId').id
         organizer = User.objects.get(id=organizer_id)
         concert = Concert.objects.create(organizerName=organizer, **validated_data)
         return concert

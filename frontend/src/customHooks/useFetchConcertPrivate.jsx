@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axiosTokenIntercept from "../utils/AxiosInterceptor";
+import TicketContext from "../context/TicketContext";
 
 const useFetchConcertPrivate = (link) => {
   const [concert, setConcert] = useState([]);
+  const { isModified } = useContext(TicketContext);
   const [serverResponseCode, setServerResponseCode] = useState(undefined);
   useEffect(() => {
     let loading = true;
@@ -23,7 +25,7 @@ const useFetchConcertPrivate = (link) => {
     return () => {
       loading = false;
     };
-  }, []);
+  }, [isModified]);
   return [concert, serverResponseCode, setConcert];
 };
 

@@ -3,14 +3,7 @@ import React from "react";
 import DatePicker from "react-datepicker";
 
 export const InputTextField = (props) => {
-  const {
-    labelName,
-    formikFieldName,
-    propError,
-    propTouched,
-    propStatus,
-    ...rest
-  } = props;
+  const { labelName, formikFieldName, propError, propTouched, ...rest } = props;
   return (
     <div className="mb-4">
       <label htmlFor={formikFieldName} className="form-label">
@@ -18,6 +11,7 @@ export const InputTextField = (props) => {
       </label>
       <input
         type="text"
+        value={rest.values}
         id={formikFieldName}
         {...rest}
         className={
@@ -78,6 +72,7 @@ export const TextAreaField = (props) => {
       <textarea
         id={formikFieldName}
         name={formikFieldName}
+        value={rest.values}
         className={
           propError && propTouched ? "form-control is-invalid" : "form-control"
         }

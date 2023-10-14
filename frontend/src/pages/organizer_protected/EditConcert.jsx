@@ -13,6 +13,13 @@ import TicketContainer from "../../components/organizer_protected/TicketContaine
 import TicketContext from "../../context/TicketContext";
 import DeleteConcertModals from "../../components/modals/DeleteConcertModals";
 
+import {
+  DatePickerField,
+  InputTextField,
+  TextAreaField,
+} from "../../components/FormFields";
+import { format, parse } from "date-fns";
+
 const EditConcert = () => {
   const { concertName } = useParams();
   const { user } = useContext(AuthContext);
@@ -25,6 +32,53 @@ const EditConcert = () => {
   const { setDateMin, setDateMax } = useContext(TicketContext);
   const [modalConcertDelete, setModalConcertDelete] = useState(false);
 
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleSubmit,
+    handleChange,
+    setValues,
+    setFieldValue,
+    setFieldTouched,
+  } = useFormik({
+    initialValues: {
+      name: "",
+      bannerImg: null,
+      paragraph: "",
+      id: "",
+      dateValidRange1: new Date(),
+      dateValidRange2: null,
+    },
+    validationSchema: ConcertSchema,
+    onSubmit: (values) => {
+      const payload = {
+        name: values.name,
+        bannerImg: values.bannerImg,
+        paragraph: values.paragraph,
+        organizerId: user.user_id,
+        dateValidRange1: format(values.dateValidRange1, "yyyy-MM-dd"),
+        dateValidRange2: format(values.dateValidRange2, "yyyy-MM-dd"),
+        id: values.id,
+      };
+      axiosTokenIntercept
+        .patch(`/api/organizer/concert/`, payload, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          navigate(-1);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  });
+
+  const validateBannerImg = (value) => undefined;
+  // Override the validation function for the bannerImg field
   useEffect(() => {
     setIsLoaded(false);
     const fetchConcert = async () => {
@@ -33,15 +87,24 @@ const EditConcert = () => {
           params: { concert_name: concertName },
         })
         .then((result) => {
-          console.log(result.data);
           setConcertFields(result.data);
           setDateMin(result.data["dateValidRange1"]);
           setDateMax(result.data["dateValidRange2"]);
           setValues({
-            name: result.data["name"],
+            name: "hello",
             limit: result.data["limit"],
             paragraph: result.data["paragraph"],
             id: result.data["id"],
+            dateValidRange1: parse(
+              result.data["dateValidRange1"],
+              "yyyy-MM-dd",
+              new Date()
+            ),
+            dateValidRange2: parse(
+              result.data["dateValidRange2"],
+              "yyyy-MM-dd",
+              new Date()
+            ),
           });
           setImagePreview(
             `${mediaBaseUrl}${apiStaticURL}${result.data["bannerImg"]}`
@@ -62,40 +125,6 @@ const EditConcert = () => {
     };
     // eslint-disable-next-line
   }, []);
-  const {
-    values,
-    errors,
-    touched,
-    handleBlur,
-    handleSubmit,
-    handleChange,
-    setValues,
-    setFieldValue,
-    setFieldTouched,
-  } = useFormik({
-    initialValues: {
-      name: "",
-      limit: "",
-      bannerImg: null,
-      paragraph: "",
-      id: "",
-    },
-    validationSchema: ConcertSchema,
-    onSubmit: (values) => {
-      axiosTokenIntercept
-        .patch(`/api/organizer/concert/`, values, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          navigate(-1);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-  });
 
   if (!concertFields) {
     return null;
@@ -141,68 +170,47 @@ const EditConcert = () => {
                 <div className="feedback-invalid mt-2">{errors.bannerImg}</div>
               ) : null}
             </div>
-            <div className="mb-3">
-              <label htmlFor="name" className="form-label">
-                Concert name
-              </label>
-              <input
-                className={
-                  errors.name ? "form-control is-invalid" : "form-control"
-                }
-                type="text"
-                id="name"
-                onChange={handleChange}
+
+            <InputTextField
+              labelName="Concert Name"
+              formikFieldName="name"
+              propError={errors.name}
+              propTouched={touched.name}
+              values={values.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+
+            <TextAreaField
+              labelName="Paragraph"
+              formikFieldName="paragraph"
+              propError={errors.paragraph}
+              propTouched={touched.paragraph}
+              onChange={handleChange}
+              values={values.paragraph}
+              onBlur={handleBlur}
+            />
+
+            <div className="mb-3 d-flex flex-row">
+              <DatePickerField
+                labelName="Start Date"
+                formikFieldName="dateValidRange1"
+                propError={errors.dateValidRange1}
+                propTouched={touched.dateValidRange1}
+                propValue={values.dateValidRange1}
                 onBlur={handleBlur}
-                value={values.name}
+                onChange={(value) => setFieldValue("dateValidRange1", value)}
               />
-              {errors.name && touched.name ? (
-                <div className="feedback-invalid mt-2">{errors.name}</div>
-              ) : null}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="paragraph" className="form-label">
-                Paragraph
-              </label>
-              <textarea
-                className={
-                  errors.paragraph ? "form-control is-invalid" : "form-control"
-                }
-                type="text"
-                cols="80"
-                rows="5"
-                id="paragraph"
-                onChange={handleChange}
+              <DatePickerField
+                labelName="End Date"
+                formikFieldName="dateValidRange2"
+                propError={errors.dateValidRange2}
+                propTouched={touched.dateValidRange2}
+                propValue={values.dateValidRange2}
                 onBlur={handleBlur}
-                value={values.paragraph}
-              ></textarea>
-              {errors.paragraph && touched.paragraph ? (
-                <div className="feedback-invalid mt-2">{errors.paragraph}</div>
-              ) : null}
-            </div>
-            <div className="mb-3">
-              <label htmlFor="limit" className="form-label">
-                Ticket limit
-              </label>
-              <input
-                className={
-                  errors.limit ? "form-control is-invalid" : "form-control"
-                }
-                type="number"
-                id="limit"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.limit}
-                accept="image/jpeg, image/png"
+                onChange={(value) => setFieldValue("dateValidRange2", value)}
               />
-              {errors.limit && touched.limit ? (
-                <div className="feedback-invalid mt-2">{errors.limit}</div>
-              ) : null}
             </div>
-            {/*
-            <div className='mb-3'>
-              <Calendar onChange={onChange} value={dateValue} selectRange={true} minDate={new Date()} calendarType='iso8601'/>
-            </div>
-          */}
             <div className="mt-3">
               <PurpleButton type="submit" className="px-5 py-2">
                 Edit

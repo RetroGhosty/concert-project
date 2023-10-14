@@ -12,10 +12,12 @@ import { ConcertSchema } from "../../schema/ConcertSchema";
 import axiosTokenIntercept from "../../utils/AxiosInterceptor";
 import AuthContext from "../../context/AuthContext";
 import { format } from "date-fns";
+import TicketContext from "../../context/TicketContext";
 
 const CreateConcertModals = (props) => {
   const { ...rest } = props;
   const { user } = useContext(AuthContext);
+  const { setIsModified } = useContext(TicketContext);
 
   const formik = useFormik({
     validationSchema: ConcertSchema,
@@ -37,7 +39,10 @@ const CreateConcertModals = (props) => {
         dateValidRange1: format(values.dateValidRange1, "yyyy-MM-dd"),
         dateValidRange2: format(values.dateValidRange2, "yyyy-MM-dd"),
         organizerId: values.organizerName,
+        id: values.organizerName,
       };
+
+      console.log(payload);
 
       axiosTokenIntercept
         .post("/api/organizer/concert/", payload, {
@@ -47,6 +52,7 @@ const CreateConcertModals = (props) => {
         })
         .then((response) => {
           rest.onHide();
+          setIsModified(true);
         })
         .catch((err) => {
           console.log(err.response.data["errors"]);
@@ -80,7 +86,6 @@ const CreateConcertModals = (props) => {
           <InputTextField
             labelName="Name of concert"
             formikFieldName="name"
-            propStatus={formik.status?.name}
             propError={formik.errors.name}
             propTouched={formik.touched.name}
             values={formik.values.name}

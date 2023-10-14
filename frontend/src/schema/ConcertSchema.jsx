@@ -6,7 +6,6 @@ export const ConcertSchema = yup.object().shape({
     .min(5, "Way too short")
     .max(50, "Way too long")
     .required("This field is required"),
-  bannerImg: yup.mixed().required("Image banner is required"),
   paragraph: yup
     .string()
     .min(10, "Way too short")

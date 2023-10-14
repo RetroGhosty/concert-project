@@ -10,7 +10,7 @@ const DeleteTicketTypeModals = (props) => {
 
   const ticketTypeDelete = (concertId) => {
     const payload = {
-      concertEvent: 2,
+      concertEvent: concertId,
     };
     axiosTokenIntercept
       .delete(`/api/typeticket/${currentTicketType}/`, {

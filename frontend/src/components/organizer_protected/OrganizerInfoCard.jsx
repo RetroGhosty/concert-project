@@ -10,6 +10,7 @@ import { FaSort, FaSortUp, FaSortDown } from "react-icons/fa6";
 import { PurpleButton } from "../CustomizedMaterials";
 import { motion } from "framer-motion";
 import CreateConcertModals from "../modals/CreateConcertModals";
+import { format, parseISO } from "date-fns";
 
 const OrganizerInfo_card = () => {
   const { concert, setConcert } = useContext(OrganizerContext);
@@ -36,144 +37,9 @@ const OrganizerInfo_card = () => {
     });
   }
 
-  const returnTotalValue = (ticketArr) => {
-    var totalPrice = 0;
-    for (let index = 0; index < ticketArr.length; index++) {
-      totalPrice = totalPrice + ticketArr[index]["price"];
-    }
-    return totalPrice;
-  };
-
   const navigate = useNavigate();
   const navigateTo = (linkStr, linkID) => {
     navigate(`${linkStr}/edit`);
-  };
-
-  /**
-   *  SORT STATE DIRECTION
-   * 0 = INACTIVE SIGNAL
-   * 1 = ASCENDING
-   * 2 = DESCENDING
-   */
-  const [sortStateDirection, setSortStateDirection] = useState({
-    alphabet: 0,
-    eventDate: 0,
-    revenue: 0,
-  });
-
-  const sortButton = async (command) => {
-    if (command === "alphabet") {
-      if (sortStateDirection["alphabet"] === 0) {
-        // ASCENDING FUNCTION HERE
-        //
-        const sortedItems = [...filteredItems].sort((a, b) =>
-          a["name"].localeCompare(b["name"])
-        );
-        setConcert(sortedItems);
-
-        setSortStateDirection({
-          ...sortStateDirection,
-          alphabet: 1,
-          eventDate: 0,
-          revenue: 0,
-        });
-      } else if (sortStateDirection["alphabet"] === 1) {
-        // Descending FUNCTION HERE
-        //
-        const sortedItems = [...filteredItems].sort((a, b) =>
-          b["name"].localeCompare(a["name"])
-        );
-        setConcert(sortedItems);
-
-        setSortStateDirection({
-          ...sortStateDirection,
-          alphabet: 2,
-          eventDate: 0,
-          revenue: 0,
-        });
-      } else if (sortStateDirection["alphabet"] === 2) {
-        const sortedItems = [...filteredItems].sort((a, b) =>
-          a["name"].localeCompare(b["name"])
-        );
-        setConcert(sortedItems);
-
-        setSortStateDirection({
-          ...sortStateDirection,
-          alphabet: 0,
-          eventDate: 0,
-          revenue: 0,
-        });
-      }
-    }
-    if (command === "revenue") {
-      if (sortStateDirection["revenue"] === 0) {
-        // ASCENDING FUNCTION HERE
-        const sortedItems = [...filteredItems].sort(
-          (a, b) =>
-            returnTotalValue(b["ticket"]) - returnTotalValue(a["ticket"])
-        );
-        setConcert(sortedItems);
-        console.log(sortedItems);
-        setSortStateDirection({
-          ...sortStateDirection,
-          alphabet: 0,
-          eventDate: 0,
-          revenue: 1,
-        });
-      }
-      {
-        /**
-      else if (sortStateDirection["revenue"] === 1) {
-         const sortedItems = [...filteredItems].sort(
-           (a, b) =>
-             returnTotalValue(a["ticket"]) - returnTotalValue(b["ticket"])
-         );
-         setConcerts(sortedItems);
-         setSortStateDirection({
-           ...sortStateDirection,
-           alphabet: 0,
-           eventDate: 0,
-           revenue: 2,
-         });
-       } else if (sortStateDirection["revenue"] === 2) {
-         // DESCENDING FUNCTION HERE
-         const sortedItems = [...filteredItems].sort(
-           (a, b) =>
-             returnTotalValue(b["ticket"]) - returnTotalValue(a["ticket"])
-         );
-         setConcerts(sortedItems);
-         setSortStateDirection({
-           ...sortStateDirection,
-           alphabet: 0,
-           eventDate: 0,
-           revenue: 0,
-         });
-       }
-     */
-      }
-      // ASCENDING FUNCTION HERE
-    }
-  };
-
-  const stateChecker = (stateName, theComponent) => {
-    if (theComponent === "text") {
-      if (sortStateDirection[stateName] === 1) {
-        return "active";
-      } else if (sortStateDirection[stateName] === 2) {
-        return "active";
-      } else {
-        return null;
-      }
-    }
-    if (theComponent === "icon") {
-      if (sortStateDirection[stateName] === 1) {
-        return <FaSortUp />;
-      } else if (sortStateDirection[stateName] === 2) {
-        return <FaSortDown />;
-      } else {
-        return <FaSort />;
-      }
-    }
   };
 
   const [createConcertModalState, setCreateConcertModalState] = useState(false);
@@ -182,12 +48,17 @@ const OrganizerInfo_card = () => {
     const firstLetter = userDeepDetails.username.charAt(0);
     const firstLetterCap = firstLetter.toUpperCase();
     const remainingLetters = userDeepDetails.username.slice(1);
+    for (let i = 0; i < concert.length; i++) {
+      let dateiso = concert[i]["createdAt"];
+
+      console.log(parseISO(dateiso));
+    }
     return (
       <div className="row align-items-start justify-content-between">
         <div className="col-12 info-card p-4 main-cards rounded">
           <h3>Welcome {firstLetterCap + remainingLetters}!</h3>
         </div>
-        <div className="col-12 col-lg-4 p-4 mb-3 bg-dark text-white rounded">
+        <div className="col-12 col-lg-4 p-4 mb-3 bg-dark text-white rounded customSticky">
           <TextField
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -200,29 +71,8 @@ const OrganizerInfo_card = () => {
             focused
             autoComplete="off"
           />
-          <h4 className="bolder">Sort by</h4>
-          <ul className="text-decoration-none d-flex justify-content-between mx-2 ">
-            <li
-              onClick={() => sortButton("alphabet")}
-              className={stateChecker("alphabet", "text")}
-            >
-              Alphabet {stateChecker("alphabet", "icon")}
-            </li>
-            <li
-              onClick={() => sortButton("eventDate")}
-              className={stateChecker("eventDate", "text")}
-            >
-              Event Date{stateChecker("eventDate", "icon")}
-            </li>
-            <li
-              onClick={() => sortButton("revenue")}
-              className={stateChecker("revenue", "text")}
-            >
-              Revenue{stateChecker("revenue", "icon")}
-            </li>
-          </ul>
           <PurpleButton
-            className="mt-4 p-3"
+            className="p-3"
             onClick={() => setCreateConcertModalState(true)}
           >
             Create Concert Event
@@ -248,8 +98,13 @@ const OrganizerInfo_card = () => {
                         <div className="row justify-content-between">
                           <h3 className="fw-bold col">{eachData["name"]}</h3>
                           <span className="col text-end text-secondary">
-                            Created At{" "}
-                            <div className="fw-bolder text-light"></div>
+                            Created At
+                            <div className="fw-bolder text-light">
+                              {format(
+                                parseISO(eachData["createdAt"]),
+                                "MMMM dd, yyyy"
+                              )}
+                            </div>
                           </span>
                         </div>
                       </div>

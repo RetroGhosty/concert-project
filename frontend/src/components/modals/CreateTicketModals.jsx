@@ -14,6 +14,7 @@ const CreateTicketModals = (props) => {
   const {
     values,
     setValues,
+    setErrors,
     handleBlur,
     handleChange,
     handleSubmit,
@@ -34,6 +35,7 @@ const CreateTicketModals = (props) => {
           props.onHide();
         })
         .catch((err) => {
+          setErrors(err.results.data["errors"]);
           console.log(err.result);
         });
     },
