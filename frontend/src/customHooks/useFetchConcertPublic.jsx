@@ -18,7 +18,11 @@ const useFetchConcertPublic = (link) => {
             setServerResponseCode(result.status);
           })
           .catch((err) => {
-            setServerResponseCode(err.response.status);
+            if (err.response !== undefined){
+              setServerResponseCode(err.response.status);
+            } else{
+              console.log(err)
+            }
           });
       }
     };
