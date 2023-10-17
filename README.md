@@ -1,5 +1,5 @@
 # **CONCERT TICKET BOOKING**
-***A restful web application made with React, Django and Docker***
+***A restful web application made with React, Django REST framework and Docker***
 
 ## Todo:
 1. Config environment variables
