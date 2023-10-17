@@ -4,4 +4,4 @@
 ## Todo:
 1. Config environment variables
 2. Write documentation
-3. Add Email confirmation
+3. Add email confirmation
