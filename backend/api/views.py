@@ -550,3 +550,4 @@ class Ticket(APIView):
         except Exception as ex:
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
+

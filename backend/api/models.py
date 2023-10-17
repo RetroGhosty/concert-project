@@ -16,6 +16,10 @@ class User(AbstractUser):
 
 class Concert(models.Model):
     name = models.CharField(max_length=100)
+    address= models.CharField(max_length=150, null=True)
+    city = models.CharField(max_length=100, null=True)
+    province = models.CharField(max_length=100, null=True)
+    postal = models.CharField(max_length=100, null=True)
     organizerName = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     bannerImg = models.ImageField(
         upload_to="concert_banners", default="concert_banners/default.jpg"

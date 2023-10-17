@@ -43,3 +43,10 @@ export const generateTicketSchema = yup.object().shape({
     .min(1, "Invalid value")
     .required("This field is required"),
 });
+
+export const bookTicketSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required("This field is required")
+    .email("Email is invalid"),
+});

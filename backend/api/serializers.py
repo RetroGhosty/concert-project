@@ -43,7 +43,7 @@ class PublicTicketTypeSerializer(serializers.ModelSerializer):
     isAvailable = serializers.SerializerMethodField()
     class Meta:
         model = TicketType
-        fields = ["name","description", "price", "dateValidRange1", "dateValidRange2", "isAvailable"]
+        fields = ["id", "name","description", "price", "dateValidRange1", "dateValidRange2", "isAvailable"]
     def get_isAvailable(self, obj):
         return Ticket.objects.filter(ticketType=obj).filter(boughtBy=None).exists()
 
@@ -80,6 +80,10 @@ class ConcertSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "address",
+            "city",
+            "province",
+            "postal",
             "bannerImg",
             "paragraph",
             "dateValidRange1",
@@ -113,6 +117,10 @@ class PublicConcertSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "address",
+            "city",
+            "province",
+            "postal",
             "bannerImg",
             "paragraph",
             "dateValidRange1",

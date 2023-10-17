@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import useFetchTicketType from "../customHooks/useFetchTicketType";
 import { FaPesoSign } from "react-icons/fa6";
 import { format, parse } from "date-fns";
 import { animate, motion } from "framer-motion";
+import PayTicketModals from "./modals/PayTicketModals";
 
 const TicketTypeGuestView = ({ concert_id }) => {
+  const [payTicketModalState, setPayTicketModalState] = useState(false);
+  const [currentTicketState, setCurrentTicketState] = useState(null);
+
   if (concert_id === undefined) {
     return <>Loading</>;
   }
@@ -17,18 +21,27 @@ const TicketTypeGuestView = ({ concert_id }) => {
     return <>No tickets available</>;
   }
 
+  const setTicketInfoModal = (dataparam) => {
+    setCurrentTicketState(dataparam);
+    setPayTicketModalState(true);
+  };
+
   return (
     <>
       {data?.map((ticketType, uid) => (
-        <div key={uid} className="col-12 p-0 col-lg-6 mb-5">
+        <div
+          key={uid}
+          onClick={() => setTicketInfoModal(ticketType)}
+          className="col-12 p-0 col-lg-6 mb-5"
+        >
           <motion.div
             initial={
               !ticketType.isAvailable
                 ? { backgroundColor: "#343434" }
                 : { backgroundColor: "#111111" }
             }
-            whileHover={!ticketType.isAvailable ? null : { scale: 1.05 }}
-            className="p-4 rounded user-select-none"
+            whileHover={!ticketType.isAvailable ? null : { scale: 1.03 }}
+            className="p-4 m-3 rounded user-select-none"
           >
             <b>
               {ticketType.name} {!ticketType.isAvailable ? "[Sold out]" : null}{" "}
@@ -55,6 +68,13 @@ const TicketTypeGuestView = ({ concert_id }) => {
           </motion.div>
         </div>
       ))}
+      <PayTicketModals
+        show={payTicketModalState}
+        onHide={() => {
+          setPayTicketModalState(false);
+        }}
+        ticketInfo={currentTicketState}
+      />
     </>
   );
 };

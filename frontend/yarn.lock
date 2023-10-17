@@ -630,6 +630,11 @@
   dependencies:
     "@swc/helpers" "^0.5.0"
 
+"@react-leaflet/core@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@react-leaflet/core/-/core-2.1.0.tgz#383acd31259d7c9ae8fb1b02d5e18fe613c2a13d"
+  integrity sha512-Qk7Pfu8BSarKGqILj4x7bCSZ1pjuAPZ+qmRwH5S7mDS91VSbVVsJSrW4qA+GPrro8t69gFYVMWb1Zc4yFmPiVg==
+
 "@remix-run/router@1.9.0":
   version "1.9.0"
   resolved "https://registry.npmjs.org/@remix-run/router/-/router-1.9.0.tgz"
@@ -2326,6 +2331,11 @@ jwt-decode@^3.1.2:
   resolved "https://registry.npmjs.org/jwt-decode/-/jwt-decode-3.1.2.tgz"
   integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
+leaflet@^1.9.4:
+  version "1.9.4"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.9.4.tgz#23fae724e282fa25745aff82ca4d394748db7d8d"
+  integrity sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==
+
 lie@3.1.1:
   version "3.1.1"
   resolved "https://registry.npmjs.org/lie/-/lie-3.1.1.tgz"
@@ -2641,7 +2651,7 @@ pretty-format@^29.0.0, pretty-format@^29.7.0:
 
 primereact@^10.0.3:
   version "10.0.3"
-  resolved "https://registry.yarnpkg.com/primereact/-/primereact-10.0.3.tgz#a8293fd10d85d530ba6c22fac62c4a8616403d6a"
+  resolved "https://registry.npmjs.org/primereact/-/primereact-10.0.3.tgz"
   integrity sha512-a+mC5I1gyOYZM0tf2c+7y0Pd9o6pref7fVeEXXXPk0lBORaSepMvuHqTUXCMRcN9buJ3aEfhhIDwX83K3TU5ow==
   dependencies:
     "@types/react-transition-group" "^4.4.1"
@@ -2806,6 +2816,13 @@ react-is@^18.0.0, react-is@^18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.2.0.tgz"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
+
+react-leaflet@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-4.2.1.tgz#c300e9eccaf15cb40757552e181200aa10b94780"
+  integrity sha512-p9chkvhcKrWn/H/1FFeVSqLdReGwn2qmiobOQGO3BifX+/vV/39qhY8dGqbdcPh1e6jxh/QHriLXr7a4eLFK4Q==
+  dependencies:
+    "@react-leaflet/core" "^2.1.0"
 
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
