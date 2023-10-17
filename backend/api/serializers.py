@@ -49,8 +49,6 @@ class PublicTicketTypeSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    boughtBy = serializers.SerializerMethodField()
-
     class Meta:
         model = Ticket
         fields = "__all__"
@@ -60,13 +58,13 @@ class TicketSerializer(serializers.ModelSerializer):
             "createdBy": {"required": True},
         }
 
-    def get_boughtBy(self, obj):
-        ticket = obj.boughtBy
-        if ticket:
-            dictionaryResponse = {"name": f"{ticket.username}"}
-            return dictionaryResponse["name"]
-        return None
-
+class PublicTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = "__all__"
+        extra_kwargs = {
+            "boughtBy": {"required": True}
+        }
 
 class ConcertSerializer(serializers.ModelSerializer):
     organizerName = serializers.SerializerMethodField()

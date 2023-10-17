@@ -51,9 +51,7 @@ class TicketType(models.Model):
 
 class Ticket(models.Model):
     ticketType = models.ForeignKey(TicketType, on_delete=models.CASCADE, null=True)
-    boughtBy = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="boughtBy"
-    )
+    boughtBy = models.CharField(max_length=255, null=True)
     createdBy = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, related_name="createdBy"
     )

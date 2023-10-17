@@ -551,3 +551,20 @@ class Ticket(APIView):
             responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
             return Response(data=responseDict, status=500)
 
+
+# api/public/ticket/<int:id>
+class PublicTicket(APIView):
+    def patch(self, req, id):
+        try:
+            ticket = models.Ticket.objects.filter(ticketType=id).filter(boughtBy=None).first()
+            ticketSerialized = serializers.PublicTicketSerializer(ticket, data=req.data)
+            if ticket is None:
+                return Response(data="No available ticket", status=404)
+            
+            if ticketSerialized.is_valid():
+                ticketSerialized.save()
+                return Response(data=ticketSerialized.data, status=200)
+            return Response(data="Invalid data", status=403)
+        except Exception as ex:
+            responseDict = {"Server Response": "Something went wrong", "info": str(ex)}
+            return Response(data=responseDict, status=500)

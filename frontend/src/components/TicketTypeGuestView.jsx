@@ -21,9 +21,11 @@ const TicketTypeGuestView = ({ concert_id }) => {
     return <>No tickets available</>;
   }
 
-  const setTicketInfoModal = (dataparam) => {
-    setCurrentTicketState(dataparam);
-    setPayTicketModalState(true);
+  const setTicketInfoModal = (dataparam, isAvailableParam) => {
+    if (isAvailableParam !== false) {
+      setCurrentTicketState(dataparam);
+      setPayTicketModalState(true);
+    }
   };
 
   return (
@@ -31,7 +33,7 @@ const TicketTypeGuestView = ({ concert_id }) => {
       {data?.map((ticketType, uid) => (
         <div
           key={uid}
-          onClick={() => setTicketInfoModal(ticketType)}
+          onClick={() => setTicketInfoModal(ticketType, ticketType.isAvailable)}
           className="col-12 p-0 col-lg-6 mb-5"
         >
           <motion.div

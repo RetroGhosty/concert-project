@@ -7,26 +7,47 @@ import { InputTextField } from "../FormFields";
 import { useFormik } from "formik";
 import { PurpleButton } from "../CustomizedMaterials";
 import { bookTicketSchema } from "../../schema/TicketSchemas";
+import axios from "axios";
+import { apiBaseUrl } from "../../utils/APIUtils";
+import Alert from "react-bootstrap/Alert";
 
 const PayTicketModals = (props) => {
   const { ticketInfo, ...rest } = props;
+  axios.defaults.baseURL = apiBaseUrl;
 
-  const { concertTicketPublicState } = useContext(TicketContext);
+  const { concertTicketPublicState, isModified, setIsModified } =
+    useContext(TicketContext);
 
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      validationSchema: bookTicketSchema,
-      initialValues: {
-        email: "",
-      },
-      onSubmit: (values) => {
-        const payload = {
-          id: ticketInfo["id"],
-          email: values.email,
-        };
-        console.log(payload);
-      },
-    });
+  const {
+    values,
+    errors,
+    touched,
+    status,
+    setStatus,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    validationSchema: bookTicketSchema,
+    initialValues: {
+      email: "",
+    },
+    onSubmit: (values) => {
+      const payload = {
+        boughtBy: values.email,
+      };
+      axios
+        .patch(`/api/public/ticket/${ticketInfo["id"]}/`, payload)
+        .then((response) => {
+          rest.onHide();
+          setIsModified(true);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          setStatus({ message: err.response.data });
+        });
+    },
+  });
   if (concertTicketPublicState === undefined) {
     return null;
   }
@@ -41,6 +62,9 @@ const PayTicketModals = (props) => {
         <Modal.Title>Ticket book</Modal.Title>
       </Modal.Header>
       <Modal.Body className="bg-dark text-light p-4">
+        {status && status.message ? (
+          <Alert variant="danger">{status.message}</Alert>
+        ) : null}
         <form onSubmit={handleSubmit} className="mb-4">
           <InputTextField
             className="col mb-3"
