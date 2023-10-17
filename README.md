@@ -1,4 +1,4 @@
-# **CONCERT TICKET BOOKING**
+# **CONCERT EVENT TICKET BOOKING**
 ***A restful web application made with React, Django REST framework and Docker***
 
 ## Todo:
