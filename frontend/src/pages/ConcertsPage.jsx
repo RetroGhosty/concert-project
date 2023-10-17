@@ -27,50 +27,48 @@ const ConcertsPage = () => {
 
   return (
     <>
-      <div>
-        <div className="row justify-content-between">
-          {concert.map((data) => (
-            <>
-              {isConcertExpired(data["dateValidRange2"]) ? (
-                <div className="col user-select-none concertCard">
-                  <Card key={data.id}>
-                    <CardActionArea
-                      onClick={() => {
-                        navigate(`${data.id}`);
-                      }}
-                    >
-                      <CardMedia
-                        image={mediaBaseUrl + apiStaticURL + data.bannerImg}
-                        component="img"
-                        height="300"
-                      />
-                      <CardContent>
-                        <div className="col text-light px-2">
-                          <div className="row align-items-start justify-content-between">
-                            <div className="col">
-                              <h2 className="text-uppercase">{data.name}</h2>
-                              <span className="text-info fw-bolder">
-                                {`${format(
-                                  new Date(data["dateValidRange1"]),
-                                  "MMM dd"
-                                )} 
+      <div className="row justify-content-between">
+        {concert.map((data) => (
+          <>
+            {isConcertExpired(data["dateValidRange2"]) ? (
+              <div className="col user-select-none concertCard">
+                <Card key={data.id}>
+                  <CardActionArea
+                    onClick={() => {
+                      navigate(`${data.id}`);
+                    }}
+                  >
+                    <CardMedia
+                      image={mediaBaseUrl + apiStaticURL + data.bannerImg}
+                      component="img"
+                      height="300"
+                    />
+                    <CardContent>
+                      <div className="col text-light px-2">
+                        <div className="row align-items-start justify-content-between">
+                          <div className="col">
+                            <h2 className="text-uppercase">{data.name}</h2>
+                            <span className="text-info fw-bolder">
+                              {`${format(
+                                new Date(data["dateValidRange1"]),
+                                "MMM dd"
+                              )} 
                           - 
                           ${format(
                             new Date(data["dateValidRange2"]),
                             "MMM dd"
                           )}`}
-                              </span>
-                            </div>
+                            </span>
                           </div>
                         </div>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </div>
-              ) : null}
-            </>
-          ))}
-        </div>
+                      </div>
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
+              </div>
+            ) : null}
+          </>
+        ))}
       </div>
     </>
   );
