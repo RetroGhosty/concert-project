@@ -17,6 +17,7 @@ import {
   DatePickerField,
   InputTextField,
   TextAreaField,
+  InputNumberField,
 } from "../../components/FormFields";
 import { format, parse } from "date-fns";
 
@@ -29,6 +30,7 @@ const EditConcert = () => {
   let [imagePreview, setImagePreview] = useState(null);
   const [data, setData] = useState();
 
+  const [localDateMin, setLocalDateMin] = useState(null);
   const { setDateMin, setDateMax } = useContext(TicketContext);
   const [modalConcertDelete, setModalConcertDelete] = useState(false);
 
@@ -45,6 +47,10 @@ const EditConcert = () => {
   } = useFormik({
     initialValues: {
       name: "",
+      address: "",
+      city: "",
+      province: "",
+      postal: "",
       bannerImg: null,
       paragraph: "",
       id: "",
@@ -55,6 +61,10 @@ const EditConcert = () => {
     onSubmit: (values) => {
       const payload = {
         name: values.name,
+        address: values.address,
+        city: values.city,
+        province: values.province,
+        postal: values.postal,
         bannerImg: values.bannerImg,
         paragraph: values.paragraph,
         organizerId: user.user_id,
@@ -88,11 +98,18 @@ const EditConcert = () => {
         })
         .then((result) => {
           setConcertFields(result.data);
+          setLocalDateMin(
+            parse(result.data["dateValidRange1"], "yyyy-MM-dd", new Date())
+          );
           setDateMin(result.data["dateValidRange1"]);
           setDateMax(result.data["dateValidRange2"]);
           setValues({
-            name: "hello",
+            name: result.data["name"],
             limit: result.data["limit"],
+            address: result.data["address"],
+            city: result.data["city"],
+            province: result.data["province"],
+            postal: result.data["postal"],
             paragraph: result.data["paragraph"],
             id: result.data["id"],
             dateValidRange1: parse(
@@ -190,6 +207,51 @@ const EditConcert = () => {
               values={values.paragraph}
               onBlur={handleBlur}
             />
+            <div className="mb-3 row">
+              <InputTextField
+                labelName="Address"
+                formikFieldName="address"
+                className="col"
+                propError={errors.address}
+                propTouched={touched.address}
+                values={values.address}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <InputNumberField
+                labelName="Postal"
+                className="col-4"
+                formikFieldName="postal"
+                propError={errors.postal}
+                propTouched={touched.postal}
+                values={values.postal}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </div>
+
+            <div className="mb-3 row align-items-start">
+              <InputTextField
+                className="col"
+                labelName="City"
+                formikFieldName="city"
+                propError={errors.city}
+                propTouched={touched.city}
+                values={values.city}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              <InputTextField
+                className="col"
+                labelName="Province"
+                formikFieldName="province"
+                propError={errors.province}
+                propTouched={touched.province}
+                values={values.province}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </div>
 
             <div className="mb-3 d-flex flex-row">
               <DatePickerField
@@ -198,6 +260,8 @@ const EditConcert = () => {
                 propError={errors.dateValidRange1}
                 propTouched={touched.dateValidRange1}
                 propValue={values.dateValidRange1}
+                minDate={localDateMin}
+                maxDate={values.dateValidRange2}
                 onBlur={handleBlur}
                 onChange={(value) => setFieldValue("dateValidRange1", value)}
               />
@@ -207,6 +271,7 @@ const EditConcert = () => {
                 propError={errors.dateValidRange2}
                 propTouched={touched.dateValidRange2}
                 propValue={values.dateValidRange2}
+                minDate={values.dateValidRange1}
                 onBlur={handleBlur}
                 onChange={(value) => setFieldValue("dateValidRange2", value)}
               />

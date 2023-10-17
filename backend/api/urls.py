@@ -21,4 +21,5 @@ urlpatterns = [
     path("typeticket/<int:id>/", views.TicketType.as_view()),
     path("public/typeticket/<int:concert_id>/", views.GetTicketTypeAll.as_view()),
     path("ticket/<int:id>/", views.Ticket.as_view()),
+    path("public/ticket/<int:id>/", views.PublicTicket.as_view())
 ]

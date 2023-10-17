@@ -3,14 +3,51 @@ import React from "react";
 import DatePicker from "react-datepicker";
 
 export const InputTextField = (props) => {
-  const { labelName, formikFieldName, propError, propTouched, ...rest } = props;
+  const {
+    labelName,
+    formikFieldName,
+    propError,
+    propTouched,
+    className,
+    ...rest
+  } = props;
   return (
-    <div className="mb-4">
+    <div className={className}>
       <label htmlFor={formikFieldName} className="form-label">
         {labelName}
       </label>
       <input
         type="text"
+        value={rest.values}
+        id={formikFieldName}
+        {...rest}
+        className={
+          propError && propTouched ? " form-control is-invalid" : "form-control"
+        }
+      />
+      {propError && propTouched ? (
+        <div className="feedback-invalid mt-2">{propError}</div>
+      ) : null}
+    </div>
+  );
+};
+
+export const InputNumberField = (props) => {
+  const {
+    labelName,
+    formikFieldName,
+    propError,
+    propTouched,
+    className,
+    ...rest
+  } = props;
+  return (
+    <div className={className}>
+      <label htmlFor={formikFieldName} className="form-label">
+        {labelName}
+      </label>
+      <input
+        type="number"
         value={rest.values}
         id={formikFieldName}
         {...rest}
@@ -32,6 +69,7 @@ export const DatePickerField = (props) => {
     propError,
     propTouched,
     propValue,
+    minDate,
     ...rest
   } = props;
   return (
@@ -45,7 +83,7 @@ export const DatePickerField = (props) => {
           propError && propTouched ? "form-control is-invalid" : "form-control"
         }
         selected={propValue}
-        minDate={new Date()}
+        minDate={minDate}
         {...rest}
       />
       {propError && propTouched ? (

@@ -43,14 +43,12 @@ class PublicTicketTypeSerializer(serializers.ModelSerializer):
     isAvailable = serializers.SerializerMethodField()
     class Meta:
         model = TicketType
-        fields = ["name","description", "price", "dateValidRange1", "dateValidRange2", "isAvailable"]
+        fields = ["id", "name","description", "price", "dateValidRange1", "dateValidRange2", "isAvailable"]
     def get_isAvailable(self, obj):
         return Ticket.objects.filter(ticketType=obj).filter(boughtBy=None).exists()
 
 
 class TicketSerializer(serializers.ModelSerializer):
-    boughtBy = serializers.SerializerMethodField()
-
     class Meta:
         model = Ticket
         fields = "__all__"
@@ -60,13 +58,13 @@ class TicketSerializer(serializers.ModelSerializer):
             "createdBy": {"required": True},
         }
 
-    def get_boughtBy(self, obj):
-        ticket = obj.boughtBy
-        if ticket:
-            dictionaryResponse = {"name": f"{ticket.username}"}
-            return dictionaryResponse["name"]
-        return None
-
+class PublicTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = "__all__"
+        extra_kwargs = {
+            "boughtBy": {"required": True}
+        }
 
 class ConcertSerializer(serializers.ModelSerializer):
     organizerName = serializers.SerializerMethodField()
@@ -80,6 +78,10 @@ class ConcertSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "address",
+            "city",
+            "province",
+            "postal",
             "bannerImg",
             "paragraph",
             "dateValidRange1",
@@ -113,6 +115,10 @@ class PublicConcertSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "address",
+            "city",
+            "province",
+            "postal",
             "bannerImg",
             "paragraph",
             "dateValidRange1",

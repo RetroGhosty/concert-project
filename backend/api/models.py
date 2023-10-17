@@ -16,6 +16,10 @@ class User(AbstractUser):
 
 class Concert(models.Model):
     name = models.CharField(max_length=100)
+    address= models.CharField(max_length=150, null=True)
+    city = models.CharField(max_length=100, null=True)
+    province = models.CharField(max_length=100, null=True)
+    postal = models.CharField(max_length=100, null=True)
     organizerName = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     bannerImg = models.ImageField(
         upload_to="concert_banners", default="concert_banners/default.jpg"
@@ -47,9 +51,7 @@ class TicketType(models.Model):
 
 class Ticket(models.Model):
     ticketType = models.ForeignKey(TicketType, on_delete=models.CASCADE, null=True)
-    boughtBy = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name="boughtBy"
-    )
+    boughtBy = models.CharField(max_length=255, null=True)
     createdBy = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, related_name="createdBy"
     )

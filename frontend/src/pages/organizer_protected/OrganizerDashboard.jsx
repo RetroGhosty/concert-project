@@ -1,12 +1,8 @@
-import { React, useContext, useEffect, useState, createContext } from "react";
+import { React, createContext } from "react";
 import OrganizerInfoCard from "../../components/organizer_protected/OrganizerInfoCard";
-import AuthContext from "../../context/AuthContext";
 import useFetchConcertPrivate from "../../customHooks/useFetchConcertPrivate";
-import { TicketProvider } from "../../context/TicketContext";
 const OrganizerDashboard = () => {
-  const { logout } = useContext(AuthContext);
-  const [concert, serverResponseCode, setConcert] =
-    useFetchConcertPrivate(`/api/concert/`);
+  const [concert, setConcert] = useFetchConcertPrivate(`/api/concert/`);
 
   let contextDiary = {
     concert: concert,

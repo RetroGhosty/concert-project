@@ -7,6 +7,7 @@ import {
   InputTextField,
   TextAreaField,
   FormikImageField,
+  InputNumberField,
 } from "../FormFields";
 import { ConcertSchema } from "../../schema/ConcertSchema";
 import axiosTokenIntercept from "../../utils/AxiosInterceptor";
@@ -23,6 +24,10 @@ const CreateConcertModals = (props) => {
     validationSchema: ConcertSchema,
     initialValues: {
       name: "",
+      address: "",
+      city: "",
+      province: "",
+      postal: "",
       bannerImg: null,
       paragraph: "",
       dateValidRange1: new Date(),
@@ -34,6 +39,10 @@ const CreateConcertModals = (props) => {
     onSubmit: (values) => {
       const payload = {
         name: values.name,
+        address: values.address,
+        city: values.city,
+        province: values.province,
+        postal: values.postal,
         bannerImg: values.bannerImg,
         paragraph: values.paragraph,
         dateValidRange1: format(values.dateValidRange1, "yyyy-MM-dd"),
@@ -56,7 +65,6 @@ const CreateConcertModals = (props) => {
         })
         .catch((err) => {
           console.log(err.response.data["errors"]);
-
           formik.setErrors(err.response.data["errors"]);
         });
     },
@@ -85,6 +93,7 @@ const CreateConcertModals = (props) => {
         <Modal.Body className="bg-dark text-light p-4">
           <InputTextField
             labelName="Name of concert"
+            className="mb-3"
             formikFieldName="name"
             propError={formik.errors.name}
             propTouched={formik.touched.name}
@@ -93,6 +102,62 @@ const CreateConcertModals = (props) => {
             onBlur={formik.handleBlur}
           />
 
+          <TextAreaField
+            labelName="Description"
+            formikFieldName="paragraph"
+            propError={formik.errors.paragraph}
+            propTouched={formik.touched.paragraph}
+            propValue={formik.values.paragraph}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+          />
+
+          <div className="mb-3 row">
+            <InputTextField
+              labelName="Address"
+              formikFieldName="address"
+              className="col"
+              propError={formik.errors.address}
+              propTouched={formik.touched.address}
+              values={formik.values.address}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <InputNumberField
+              labelName="Postal"
+              className="col-4"
+              formikFieldName="postal"
+              propError={formik.errors.postal}
+              propTouched={formik.touched.postal}
+              values={formik.values.postal}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+          </div>
+
+          <div className="mb-3 row align-items-start">
+            <InputTextField
+              className="col"
+              labelName="City"
+              formikFieldName="city"
+              propError={formik.errors.city}
+              propTouched={formik.touched.city}
+              values={formik.values.city}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            <InputTextField
+              className="col"
+              labelName="Province"
+              formikFieldName="province"
+              propError={formik.errors.province}
+              propTouched={formik.touched.province}
+              values={formik.values.province}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+          </div>
+
           <div className="mb-3 d-flex flex-row align-items-start">
             <DatePickerField
               labelName="Start Date"
@@ -100,6 +165,8 @@ const CreateConcertModals = (props) => {
               propError={formik.errors.dateValidRange1}
               propTouched={formik.touched.dateValidRange1}
               propValue={formik.values.dateValidRange1}
+              minDate={new Date()}
+              maxDate={formik.values.dateValidRange2}
               onChange={(value) =>
                 formik.setFieldValue("dateValidRange1", value)
               }
@@ -111,22 +178,13 @@ const CreateConcertModals = (props) => {
               propError={formik.errors.dateValidRange2}
               propTouched={formik.touched.dateValidRange2}
               propValue={formik.values.dateValidRange2}
+              minDate={formik.values.dateValidRange1}
               onChange={(value) =>
                 formik.setFieldValue("dateValidRange2", value)
               }
               onBlur={formik.handleBlur}
             />
           </div>
-
-          <TextAreaField
-            labelName="Description"
-            formikFieldName="paragraph"
-            propError={formik.errors.paragraph}
-            propTouched={formik.touched.paragraph}
-            propValue={formik.values.paragraph}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
 
           <FormikImageField
             labelName="Banner Image"
