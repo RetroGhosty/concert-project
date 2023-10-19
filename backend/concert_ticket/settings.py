@@ -189,8 +189,8 @@ CORS_ALLOW_HEADERS = [
 
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 1025
-# EMAIL_HOST_USER = "postmaster@ph.redemption-dev.online"
-# EMAIL_HOST_PASSWORD = "7ce0657925e8ab77987d84c34ee4c19e-4b98b89f-acf11729"
+# EMAIL_HOST_USER = ""
+# EMAIL_HOST_PASSWORD = ""
 
 # Static Files
 """
